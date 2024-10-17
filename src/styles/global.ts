@@ -16,7 +16,10 @@ body {
   overflow-x: hidden;
   font-family: 'GmarketSansMedium';
 }
-
+a {
+      color: inherit; 
+      text-decoration: none;
+}
 
 @media (max-width: 1500px) {
   html,body {
