@@ -4,11 +4,13 @@ interface UserState {
     email: string | null;
     name: string | null;
     role: string | null;
+    isLoggedIn: boolean;
 }
 const initialState: UserState = {
     email: null,
     name: null,
     role: null,
+    isLoggedIn: false,
 };
 
 const userSlice = createSlice({

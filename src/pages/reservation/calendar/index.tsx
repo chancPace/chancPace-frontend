@@ -1,4 +1,6 @@
 import SalesCalendar from '@/components/SalesCalendar';
+import WithAuth from '@/hoc/withAuth';
+
 
 const calendar = () => {
     return (
@@ -7,4 +9,4 @@ const calendar = () => {
         </>
     );
 };
-export default calendar;
+export default WithAuth(calendar, { roleRequired: 'host' });

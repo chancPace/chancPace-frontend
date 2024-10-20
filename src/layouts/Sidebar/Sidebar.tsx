@@ -5,6 +5,8 @@ import { SidebarStyled } from "./styled";
 import { Layout } from "antd";
 import clsx from "clsx";
 import SideBar from "@/utill/createSideMenu";
+import { useSelector } from "react-redux";
+import { RootState } from "@/utill/redux/store";
 
 export interface SidebarProps {
   className?: string;
@@ -12,6 +14,8 @@ export interface SidebarProps {
 }
 
 const Sidebar = ({ className, children }: SidebarProps) => {
+  const role = useSelector((state: RootState) => state.user.role);
+  console.log(role,'롤')
   return (
     <SidebarStyled className={clsx("Sidebar", className)}>
       <div>

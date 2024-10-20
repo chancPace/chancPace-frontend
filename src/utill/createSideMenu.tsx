@@ -1,6 +1,8 @@
 import { Menu, MenuProps } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/utill/redux/store';
 
 export const createSidebarMenus = (
     menus: MenuProps['items']
@@ -9,7 +11,6 @@ export const createSidebarMenus = (
 
     return menus.map((menu) => {
         if (!menu || !('label' in menu)) return menu;
-
         if ('children' in menu) {
             return {
                 ...menu,
@@ -26,6 +27,7 @@ export const createSidebarMenus = (
 
 const SideBar = () => {
     const router = useRouter();
+    const role = useSelector((state: RootState) => state.user.role); // role을 가져옴
 
     const sidebarMenus = createSidebarMenus([
         {
