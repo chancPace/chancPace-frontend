@@ -3,7 +3,7 @@ import { Component, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useDispatch, UseDispatch } from 'react-redux';
 import Cookies from 'js-cookie';
-import { getUserDataByToken } from '@/api/api';
+import { getUserDataByToken } from '@/pages/api/userApi';
 import { setUser } from '@/utill/redux/slices/userSlice';
 
 const AppWrapper = ({
