@@ -1,6 +1,6 @@
-import WithAuth from "@/hoc/withAuth";
+import WithAuth from '@/hoc/withAuth';
 
 const qa = () => {
     return <div>q&a</div>;
 };
-export default WithAuth(qa, { roleRequired: 'host' });
+export default WithAuth(qa, { roleRequired: 'HOST' });
