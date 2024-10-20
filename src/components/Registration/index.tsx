@@ -34,8 +34,8 @@ interface SpaceData {
 }
 
 const Registration = () => {
-    // const [fileList, setFileList] = useState<UploadFile[]>([]);
-    const [form] = Form.useForm(); // useForm 훅을 사용하여 폼 인스턴스 생성
+    //폼 인스턴스 생성: 폼의 초기값 설정, 제출 후 초기화 기능을 위해
+    const [form] = Form.useForm();
 
     const [formData, setFormData] = useState<SpaceData>({
         spaceName: '',
@@ -49,13 +49,14 @@ const Registration = () => {
         isOpen: true,
     });
 
-    const [loading, setLoading] = useState(false);
-
+    //폼 필드 변경 처리 함수
     const handleInputChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
         setFormData({
             ...formData,
+            //e.target.name: 각 필드의 name속성
+            //e.target.value: 사용자가 입력한 값
             [e.target.name]: e.target.value,
         });
     };
@@ -78,29 +79,15 @@ const Registration = () => {
     };
 
     const handleSubmit = async () => {
-        setLoading(true);
         try {
+            //서버에 폼데이터 전송
             const response = await addNewSpace(formData);
             message.success('공간 등록 성공');
-            form.resetFields(); // 전송 성공 시 폼 리셋
+            // 전송 성공 시 폼 리셋
+            form.resetFields();
         } catch (error) {
             message.error('공간등록 실패');
         }
-    };
-
-    // const handleSubmit = async () => {
-    //     setLoading(true);
-    //     try {
-    //         const response = await addNewSpace({
-    //             ...formData,
-    //             images: fileList.map(file => file.originFileObj)
-    //         })
-    //     }
-    // }
-
-    const [componentDisabled, setComponentDisabled] = useState<boolean>(false);
-    const onFormLayoutChange = ({ disabled }: { disabled: boolean }) => {
-        setComponentDisabled(disabled);
     };
 
     return (
@@ -109,8 +96,6 @@ const Registration = () => {
                 labelCol={{ span: 4 }}
                 wrapperCol={{ span: 14 }}
                 layout="horizontal"
-                onValuesChange={onFormLayoutChange}
-                disabled={componentDisabled}
                 onFinish={handleSubmit}
             >
                 <Form.Item label="제목">
@@ -145,7 +130,6 @@ const Registration = () => {
                         value={formData.description}
                         onChange={handleInputChange}
                         className="custom-textarea"
-
                     />
                 </Form.Item>
                 <Form.Item label="시설 안내">
@@ -155,7 +139,6 @@ const Registration = () => {
                         value={formData.amenities}
                         onChange={handleInputChange}
                         className="custom-textarea"
-
                     />
                 </Form.Item>
                 {/* <Form.Item label="예약시 주의사항">
