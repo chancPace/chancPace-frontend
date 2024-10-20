@@ -1,4 +1,6 @@
+import Registration from "@/components/Registration"
+
 const registration = () => {
-    return (<div>registration</div>)
+    return (<Registration />)
 }
 export default registration
