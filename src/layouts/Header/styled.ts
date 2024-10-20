@@ -1,13 +1,12 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const HeaderStyled = styled.div`
     width: 100vw;
     height: 50px;
-    background-color: blue;
     position: fixed;
     top: 0;
     left: 0;
-    padding: ${({theme}) => theme.spacing.sm};
+    padding: ${({ theme }) => theme.spacing.sm};
     nav {
         height: 100%;
         display: flex;
@@ -17,4 +16,4 @@ export const HeaderStyled = styled.div`
             padding: 0 10px;
         }
     }
-`
+`;
