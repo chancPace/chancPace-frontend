@@ -10,11 +10,8 @@ const Header = () => {
                 </Link>
 
                 <div className="userBar">
-                    <Link href='/login' passHref>
+                    <Link href='http://localhost:3000/login' passHref>
                         <span>로그인</span>
-                    </Link>
-                    <Link href='/signup' passHref>
-                        <span>회원가입</span>
                     </Link>
                 </div>
             </nav>
