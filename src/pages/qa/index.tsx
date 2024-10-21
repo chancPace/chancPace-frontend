@@ -1,4 +1,4 @@
-import WithAuth from '@/hoc/withAuth';
+import WithAuth from '@/hoc/WithAuth';
 
 const qa = () => {
     return <div>q&a</div>;

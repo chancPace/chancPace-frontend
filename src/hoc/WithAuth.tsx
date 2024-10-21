@@ -6,9 +6,8 @@ interface AuthProps {
 }
 
 const WithAuth = (
-    Component: React.ComponentType,
-    { roleRequired }: AuthProps
-) => {
+qa: unknown, // Component: React.ComponentType,
+{ roleRequired }: AuthProps) => {
     return (props: any) => {
         const role = useSelector((state: RootState) => state.user.role);
         if (role !== roleRequired) {
@@ -23,3 +22,5 @@ const WithAuth = (
     };
 };
 export default WithAuth;
+
+

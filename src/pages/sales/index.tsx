@@ -1,4 +1,4 @@
-import WithAuth from '@/hoc/withAuth';
+import WithAuth from '@/hoc/WithAuth';
 
 const sales = () => {
     return <div>매출조회</div>;

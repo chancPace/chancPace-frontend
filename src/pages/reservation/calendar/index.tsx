@@ -1,5 +1,5 @@
 import SalesCalendar from '@/components/SalesCalendar';
-import WithAuth from '@/hoc/withAuth';
+import WithAuth from '@/hoc/WithAuth';
 
 const calendar = () => {
     return (
