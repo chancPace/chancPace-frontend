@@ -13,7 +13,7 @@ const AppWrapper = ({
     Component: any;
     pageProps: any;
 }) => {
-    const [loading, setLoading] = useState(true);
+    // const [loading, setLoading] = useState(true);
     const dispatch = useDispatch();
     const router = useRouter();
 
@@ -34,25 +34,26 @@ const AppWrapper = ({
                                 email: userData.data.email,
                                 name: userData.data.name,
                                 role: userData.data.role,
+                                isLoggedIn: false
                             })
                         );
                     }
-                    setLoading(false);
+                    // setLoading(false);
                 } catch (error: any) {
                     console.error('에러발생');
-                    // router.push('http://localhost:3000/login');
+                    router.push('http://localhost:3000/login');
                 }
             } else {
                 console.error('토큰이 없습니다');
-                // router.push('http://localhost:3000/login');
+                router.push('http://localhost:3000/login');
             }
         };
         fetchUserData();
     }, []);
 
-    if (loading) {
-        return <div> Loading...</div>;
-    }
+    // if (loading) {
+    //     return <div> Loading...</div>;
+    // }
 
     return (
         <Template>
