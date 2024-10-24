@@ -1,53 +1,85 @@
 import { RegistrationStyled } from './styled';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
+import { Category } from '../../pages/types';
 import {
     Form,
     Input,
     Button,
-    Radio,
     Select,
-    Cascader,
     DatePicker,
     InputNumber,
-    TreeSelect,
     Switch,
-    Checkbox,
     Upload,
     UploadFile,
     message,
+    TimePicker,
 } from 'antd';
 import { addNewSpace } from '@/pages/api/spaceApi';
-const { RangePicker } = DatePicker;
 const { TextArea } = Input;
-
-interface SpaceData {
-    spaceName: string;
-    spaceLocation: string;
-    description: string;
-    spacePrice: number;
-    discount: number;
-    amenities: string;
-    cleanTime: number;
-    spaceStatus: 'AVAILABLE' | 'UNAVAILABLE';
-    isOpen: boolean;
-}
+import { Space } from '../../pages/types'; 
+import Cookies from 'js-cookie'; 
+import { getCategories } from '@/pages/api/categoryApi';
+import dayjs from 'dayjs';
 
 const Registration = () => {
     //폼 인스턴스 생성: 폼의 초기값 설정, 제출 후 초기화 기능을 위해
     const [form] = Form.useForm();
-
-    const [formData, setFormData] = useState<SpaceData>({
-        spaceName: '',
-        spaceLocation: '',
-        description: '',
-        spacePrice: 0,
-        discount: 0,
-        amenities: '',
-        cleanTime: 0,
+    const [categories, setCategories] = useState<Category[]>([]);
+    const [formData, setFormData] = useState<Space>({
+        spaceName: 'test',
+        spaceLocation: 'test',
+        description: 'test',
+        spacePrice: 10000,
+        discount: 1000,
+        amenities: 'test',
         spaceStatus: 'AVAILABLE',
         isOpen: true,
+        caution: 'test',
+        category: 'test',
+        minGuests: 1,
+        maxGuests: 1,
+        spaceImg: [],
+        cleanTime: 30,
+        businessStartTime: '',
+        businessEndTime: '',
     });
+
+    const [fileList, setFileList] = useState<UploadFile[]>([]);
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const categoriesData = await getCategories();
+                setCategories(categoriesData.data);
+            } catch (error) {
+                message.error('카테고리 목록을 불러오는 데 실패했습니다');
+            }
+        };
+        fetchCategories();
+    }, []);
+
+    const handleCategoryChange = (value: any) => {
+        setFormData({
+            ...formData,
+            category: value,
+        });
+    };
+
+    const handleBusinessHoursChange = (
+        time: any,
+        timeString: [string, string]
+    ) => {
+        setFormData({
+            ...formData,
+            businessStartTime: timeString[0],
+            businessEndTime: timeString[1],
+        });
+    };
+
+    const handleChange = ({ fileList }: { fileList: UploadFile[] }) => {
+        setFileList(fileList);
+    };
 
     //폼 필드 변경 처리 함수
     const handleInputChange = (
@@ -55,19 +87,14 @@ const Registration = () => {
     ) => {
         setFormData({
             ...formData,
-            //e.target.name: 각 필드의 name속성
-            //e.target.value: 사용자가 입력한 값
             [e.target.name]: e.target.value,
         });
     };
 
-    const handleNumberChange = (
-        value: number | null,
-        name: keyof SpaceData
-    ) => {
+    const handleNumberChange = (value: number | null, name: keyof Space) => {
         setFormData({
             ...formData,
-            [name]: value ?? 0, // null일 경우 0으로 처리
+            [name]: value ?? 0, 
         });
     };
 
@@ -78,13 +105,38 @@ const Registration = () => {
         });
     };
 
+
+    //FormData로 서버로 데이터 보내기
     const handleSubmit = async () => {
+        const form = new FormData();
+
+        Object.keys(formData).forEach((key) => {
+            const value = formData[key as keyof Space];
+            if (key === 'spaceImg') {
+                (value as { src: string }[]).forEach((img, index) => {
+                    form.append(`spaceImg[${index}]`, img.src);
+                });
+            } else {
+                form.append(key, String(value));
+            }
+        });
+
+        fileList.forEach((file) => {
+            form.append('image', file.originFileObj as Blob);
+        });
+        const token = Cookies.get('token');
+        if (!token) {
+            message.error('로그인이 필요합니다.');
+            return;
+        }
+        form.append(
+            'userInfo',
+            JSON.stringify({ token: Cookies.get('token') })
+        );
+
         try {
-            //서버에 폼데이터 전송
-            const response = await addNewSpace(formData);
+            await addNewSpace(form);
             message.success('공간 등록 성공');
-            // 전송 성공 시 폼 리셋
-            form.resetFields();
         } catch (error) {
             message.error('공간등록 실패');
         }
@@ -112,17 +164,6 @@ const Registration = () => {
                         onChange={handleInputChange}
                     />
                 </Form.Item>
-                <Form.Item label="청소시간">
-                    <Select
-                        value={formData.cleanTime}
-                        onChange={(value) =>
-                            handleNumberChange(value, 'cleanTime')
-                        }
-                    >
-                        <Select.Option value="30">30</Select.Option>
-                        <Select.Option value="60">60</Select.Option>
-                    </Select>
-                </Form.Item>
                 <Form.Item label="공간 소개">
                     <TextArea
                         rows={4}
@@ -130,6 +171,39 @@ const Registration = () => {
                         value={formData.description}
                         onChange={handleInputChange}
                         className="custom-textarea"
+                    />
+                </Form.Item>
+                <Form.Item label="카테고리">
+                    <Select
+                        value={formData.category}
+                        onChange={handleCategoryChange}
+                        placeholder="카테고리를 선택해주세요"
+                    >
+                        {categories.map((category) => (
+                            <Select.Option
+                                key={category.id}
+                                value={category.categoryName}
+                            >
+                                {category.categoryName}
+                            </Select.Option>
+                        ))}
+                    </Select>
+                </Form.Item>
+                <Form.Item label="가격">
+                    <InputNumber
+                        value={formData.spacePrice}
+                        onChange={(value) =>
+                            handleNumberChange(value, 'spacePrice')
+                        }
+                    />
+                </Form.Item>
+
+                <Form.Item label="할인금액">
+                    <InputNumber
+                        value={formData.discount}
+                        onChange={(value) =>
+                            handleNumberChange(value, 'discount')
+                        }
                     />
                 </Form.Item>
                 <Form.Item label="시설 안내">
@@ -141,44 +215,81 @@ const Registration = () => {
                         className="custom-textarea"
                     />
                 </Form.Item>
-                {/* <Form.Item label="예약시 주의사항">
-                    <TextArea rows={2} />
-                </Form.Item> */}
-                {/* <Form.Item label="RangePicker">
-                    <RangePicker />
-                </Form.Item> */}
-                {/* <Form.Item label="기준 인원">
-                    <InputNumber />
-                </Form.Item> */}
-                <Form.Item label="가격">
-                    <InputNumber
-                        value={formData.spacePrice}
-                        onChange={(value) =>
-                            handleNumberChange(value, 'spacePrice')
-                        }
+                <Form.Item label="예약시 주의사항">
+                    <TextArea
+                        rows={2}
+                        name="caution"
+                        value={formData.caution}
+                        onChange={handleInputChange}
                     />
                 </Form.Item>
-                <Form.Item label="할인금액">
-                    <InputNumber
-                        value={formData.discount}
+                <Form.Item label="청소시간">
+                    <Select
+                        value={formData.cleanTime}
                         onChange={(value) =>
-                            handleNumberChange(value, 'discount')
+                            handleNumberChange(value, 'cleanTime')
                         }
-                    />
+                    >
+                        <Select.Option value="30">30</Select.Option>
+                        <Select.Option value="60">60</Select.Option>
+                    </Select>
                 </Form.Item>
-
                 <Form.Item label="공개여부" valuePropName="checked">
                     <Switch
                         onChange={handleSwitchChange}
                         checked={formData.isOpen}
                     />
                 </Form.Item>
-                {/* <Form.Item label="Upload" valuePropName="fileList">
+                <Form.Item label="최소 인원">
+                    <InputNumber
+                        value={formData.minGuests}
+                        onChange={(value) =>
+                            handleNumberChange(value, 'minGuests')
+                        }
+                    />
+                </Form.Item>
+                <Form.Item label="최대 인원">
+                    <InputNumber
+                        value={formData.maxGuests}
+                        onChange={(value) =>
+                            handleNumberChange(value, 'maxGuests')
+                        }
+                    />
+                </Form.Item>
+                <Form.Item label="영업시간">
+                    <TimePicker.RangePicker
+                        use12Hours
+                        format="HH"
+                        value={
+                            formData.businessStartTime &&
+                            formData.businessEndTime
+                                ? [
+                                      dayjs(
+                                          formData.businessStartTime,
+                                          'HH:mm'
+                                      ),
+                                      dayjs(formData.businessEndTime, 'HH:mm'),
+                                  ]
+                                : null
+                        }
+                        onChange={handleBusinessHoursChange}
+                    />
+                </Form.Item>
+                <Form.Item label="Upload" valuePropName="fileList">
                     <Upload
-                        action="/upload.do"
+                        action="/uploads"
                         listType="picture-card"
                         fileList={fileList}
                         onChange={handleChange}
+                        beforeUpload={(file) => {
+                            const isImage = file.type.startsWith('image/');
+                            if (!isImage) {
+                                message.error(
+                                    '이미지 파일만 업로드 가능합니다.'
+                                );
+                            }
+                            return isImage;
+                        }}
                         showUploadList={{
                             showPreviewIcon: false, // 미리보기 아이콘 완전히 비활성화
                             showRemoveIcon: true, // 삭제 아이콘만 활성화
@@ -191,7 +302,7 @@ const Registration = () => {
                             </div>
                         )}
                     </Upload>
-                </Form.Item> */}
+                </Form.Item>
                 <Form.Item>
                     <Button type="primary" htmlType="submit">
                         등록하기
