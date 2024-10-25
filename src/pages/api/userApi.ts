@@ -4,16 +4,12 @@ const API_URL = 'http://localhost:4000/api/user';
 
 export const getUserDataByToken = async (token: string) => {
     try {
-        console.log('API 호출 시작');
         const response = await axios.post(`${API_URL}/verify-token-user`, {
             token,
         });
-        console.log('API 응답: ', response.data);
-
         return response.data;
     } catch (error: any) {
         console.error('API 요청 실패: ', error);
-
         if (error.response) {
             const { status } = error.response;
             switch (status) {

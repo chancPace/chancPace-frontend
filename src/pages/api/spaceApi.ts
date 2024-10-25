@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { Space } from '../types';
 import Cookies from 'js-cookie'; // 쿠키 라이브러리 추가
 
 const API_URL = 'http://localhost:4000/api/space';

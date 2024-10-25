@@ -1,5 +1,5 @@
 import Template from '@/layouts/Template';
-import { Component, useEffect, useState } from 'react';
+import {  useEffect} from 'react';
 import { useRouter } from 'next/navigation';
 import { useDispatch, UseDispatch } from 'react-redux';
 import Cookies from 'js-cookie';
@@ -19,9 +19,7 @@ const AppWrapper = ({
 
     useEffect(() => {
         const fetchUserData = async () => {
-            // console.log('Fetching user data...');
             const token = Cookies.get('token');
-            // console.log('Token: ', token);
 
             if (token) {
                 try {
@@ -38,7 +36,6 @@ const AppWrapper = ({
                             })
                         );
                     }
-                    // setLoading(false);
                 } catch (error: any) {
                     console.error('에러발생');
                     router.push('http://localhost:3000/login');
@@ -50,10 +47,6 @@ const AppWrapper = ({
         };
         fetchUserData();
     }, []);
-
-    // if (loading) {
-    //     return <div> Loading...</div>;
-    // }
 
     return (
         <Template>

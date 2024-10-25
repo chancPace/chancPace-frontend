@@ -12,6 +12,7 @@
     "@ant-design/icons": "^5.5.1",
     "@reduxjs/toolkit": "^2.3.0",
     "antd": "^5.17.4",
+    "antd-img-crop": "^4.23.0",
     "axios": "^1.7.7",
     "chart.js": "^4.4.2",
     "clsx": "^2.1.1",
