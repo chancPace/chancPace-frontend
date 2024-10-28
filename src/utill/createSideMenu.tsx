@@ -35,8 +35,18 @@ const SideBar = () => {
             label: `대쉬보드`,
         },
         {
-            key: '/registration',
-            label: `공간 등록`,
+            key: '/space',
+            label: '공간 관리',
+            children: [
+                {
+                    key: '/registration',
+                    label: '공간 등록',
+                },
+                {
+                    key: '/myspace',
+                    label: '공간 조회',
+                },
+            ],
         },
         {
             key: '/reservation',
@@ -50,6 +60,10 @@ const SideBar = () => {
                     key: '/reservation/inquiry',
                     label: '예약 조회',
                 },
+                // {
+                //     key: '/reservation/details',
+                //     label: '상세 조회',
+                // },
             ],
         },
         {

@@ -1,5 +1,5 @@
 import { RegistrationStyled } from './styled';
-import React, { useEffect, useState } from 'react';
+import React, { Children, useEffect, useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import { Category } from '../../pages/types';
 import {
@@ -13,6 +13,7 @@ import {
     UploadFile,
     message,
     TimePicker,
+    TreeSelect,
 } from 'antd';
 import { addNewSpace } from '@/pages/api/spaceApi';
 const { TextArea } = Input;
@@ -31,9 +32,10 @@ const Registration = () => {
         const fetchCategories = async () => {
             try {
                 const categoriesData = await getCategories();
+                // console.log(categoriesData, '카테고리 데이터 확인');
                 setCategories(categoriesData.data);
             } catch (error) {
-                message.error('카테고리 목록을 불러오는 데 실패했습니다');
+                message.error('카테고리 목록을 불러오는 데 실패했습니다.');
             }
         };
         fetchCategories();
@@ -116,12 +118,13 @@ const Registration = () => {
                     amenities: 'test',
                     spaceStatus: 'AVAILABLE',
                     isOpen: true,
-                    caution: 'test',
+                    guidelines: 'test',
                     minGuests: 1,
                     maxGuests: 1,
                     cleanTime: 30,
                     businessStartTime: '',
                     businessEndTime: '',
+                    categoryId: '1',
                 }}
             >
                 <Form.Item
@@ -147,6 +150,29 @@ const Registration = () => {
                     ]}
                 >
                     <Input />
+                </Form.Item>
+                <Form.Item
+                    label="카테고리"
+                    name="categoryId"
+                    rules={[
+                        { required: true, message: '카테고리를 선택해주세요' },
+                    ]}
+                >
+                    <Select placeholder="카테고리를 선택해주세요">
+                        {categories.map((category) => {
+                            return (
+                                <Select.Option
+                                    key={category.id}
+                                    value={category.id}
+                                    disabled={category.pId === null}
+                                >
+                                    {category.pId === null
+                                        ? `--- ${category.categoryName} ---`
+                                        : category.categoryName}
+                                </Select.Option>
+                            );
+                        })}
+                    </Select>
                 </Form.Item>
                 <Form.Item
                     label="공간 소개"
@@ -193,7 +219,7 @@ const Registration = () => {
                 </Form.Item>
                 <Form.Item
                     label="예약시 주의사항"
-                    name="caution"
+                    name="guidelines"
                     rules={[
                         {
                             required: true,
@@ -369,7 +395,7 @@ const Registration = () => {
                         )}
                     </Upload>
                 </Form.Item>
-                <Form.Item className='btn-box'>
+                <Form.Item className="btn-box">
                     <Button type="primary" htmlType="submit" className="btn">
                         등록하기
                     </Button>

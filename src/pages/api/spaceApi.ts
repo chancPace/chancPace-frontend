@@ -22,3 +22,8 @@ export const addNewSpace = async (spaceData: FormData) => {
         throw error;
     }
 };
+
+// export const getSpaces = async() => {
+//     const response = await axios.get(`${API_URL}/get-space`)
+//     return response.data;
+// }

@@ -1,11 +1,10 @@
-import SalesCalendar from '@/components/SalesCalendar';
-import WithAuth from '@/hoc/WithAuth';
+import ReservationCalendar from '@/components/ReservationCalendar';
+
+
 
 const calendar = () => {
     return (
-        <>
-            <SalesCalendar />
-        </>
+        <ReservationCalendar />
     );
 };
-export default WithAuth(calendar, { roleRequired: 'HOST' });
+export default calendar

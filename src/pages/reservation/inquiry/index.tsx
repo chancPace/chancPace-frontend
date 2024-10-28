@@ -1,6 +1,8 @@
-import WithAuth from '@/hoc/WithAuth';
+import ReservationInquiry from '@/components/ReservationInquiry';
+
+
 
 const inquiry = () => {
-    return <div>예약조회</div>;
+    return (<ReservationInquiry></ReservationInquiry>);
 };
-export default WithAuth(inquiry, { roleRequired: 'HOST' });
+export default inquiry

@@ -24,7 +24,7 @@ const AppWrapper = ({
             if (token) {
                 try {
                     const userData = await getUserDataByToken(token);
-                    console.log('User Data: ', userData);
+                    // console.log('User Data: ', userData);
 
                     if (userData.result) {
                         dispatch(
