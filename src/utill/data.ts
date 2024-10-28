@@ -1,4 +1,4 @@
-import { Space } from '@/pages/types';
+import { Space } from '@/types';
 import s1_1 from '../assets/image/s1-1.jpg';
 import s1_2 from '../assets/image/s1-2.jpg';
 import s1_3 from '../assets/image/s1-3.jpg';
@@ -27,7 +27,7 @@ const space: Space[] = [
             '대여 시간보다 적게 사용 하더라도 대관비는 환불되지 않습니다.',
             '- 기물 파손 및 청소 등의 사유로 보증금을 호스트에게 입금하여야 합니다.',
         ], //주의사항
-        categoryId: '1',
+        categoryId: 1,
         Minimum: 3, //최소인원
         Maximum: 6, //최대인원
         spaceImg: [s1_4, s1_1, s1_5, s1_2, s1_3, s1_1, s1_2], //공간사진

@@ -1,7 +1,7 @@
 import { RegistrationStyled } from './styled';
 import React, { Children, useEffect, useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
-import { Category } from '../../pages/types';
+import { Category } from '../../types';
 import {
     Form,
     Input,
@@ -17,7 +17,7 @@ import {
 } from 'antd';
 import { addNewSpace } from '@/pages/api/spaceApi';
 const { TextArea } = Input;
-import { Space } from '../../pages/types';
+import { Space } from '../../types';
 import Cookies from 'js-cookie';
 import { getCategories } from '@/pages/api/categoryApi';
 import dayjs from 'dayjs';
@@ -32,8 +32,9 @@ const Registration = () => {
         const fetchCategories = async () => {
             try {
                 const categoriesData = await getCategories();
-                // console.log(categoriesData, '카테고리 데이터 확인');
+                console.log(categoriesData, '카테고리 데이터 확인');
                 setCategories(categoriesData.data);
+                console.log(categories, '카테고리즈');
             } catch (error) {
                 message.error('카테고리 목록을 불러오는 데 실패했습니다.');
             }
@@ -99,6 +100,21 @@ const Registration = () => {
         }
     };
 
+    const categoryOptions = categories
+        .filter((category) => category.pId === null)
+        .map((parentCategory) => ({
+            label: `--- ${parentCategory.categoryName} ---`, // 대분류 이름
+            options: categories
+                .filter(
+                    (subCategory) =>
+                        Number(subCategory.pId) === parentCategory.id
+                )
+                .map((subCategory) => ({
+                    label: subCategory.categoryName, // 소분류 이름
+                    value: subCategory.id,
+                })),
+        }));
+
     return (
         <RegistrationStyled>
             <p>공간정보를 입력해주세요</p>
@@ -124,7 +140,7 @@ const Registration = () => {
                     cleanTime: 30,
                     businessStartTime: '',
                     businessEndTime: '',
-                    categoryId: '1',
+                    categoryId: 1,
                 }}
             >
                 <Form.Item
@@ -158,21 +174,10 @@ const Registration = () => {
                         { required: true, message: '카테고리를 선택해주세요' },
                     ]}
                 >
-                    <Select placeholder="카테고리를 선택해주세요">
-                        {categories.map((category) => {
-                            return (
-                                <Select.Option
-                                    key={category.id}
-                                    value={category.id}
-                                    disabled={category.pId === null}
-                                >
-                                    {category.pId === null
-                                        ? `--- ${category.categoryName} ---`
-                                        : category.categoryName}
-                                </Select.Option>
-                            );
-                        })}
-                    </Select>
+                    <Select
+                        placeholder="카테고리를 선택해주세요"
+                        options={categoryOptions}
+                    />
                 </Form.Item>
                 <Form.Item
                     label="공간 소개"
