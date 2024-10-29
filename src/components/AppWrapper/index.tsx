@@ -1,10 +1,10 @@
 import Template from '@/layouts/Template';
-import {  useEffect} from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useDispatch, UseDispatch } from 'react-redux';
 import Cookies from 'js-cookie';
-import { getUserDataByToken } from '@/pages/api/userApi';
 import { setUser } from '@/utill/redux/slices/userSlice';
+import { getUser } from '@/pages/api/userApi';
 
 const AppWrapper = ({
     Component,
@@ -13,7 +13,6 @@ const AppWrapper = ({
     Component: any;
     pageProps: any;
 }) => {
-    // const [loading, setLoading] = useState(true);
     const dispatch = useDispatch();
     const router = useRouter();
 
@@ -23,8 +22,7 @@ const AppWrapper = ({
 
             if (token) {
                 try {
-                    const userData = await getUserDataByToken(token);
-                    // console.log('User Data: ', userData);
+                    const userData = await getUser(token);
 
                     if (userData.result) {
                         dispatch(
@@ -32,7 +30,7 @@ const AppWrapper = ({
                                 email: userData.data.email,
                                 name: userData.data.name,
                                 role: userData.data.role,
-                                isLoggedIn: false
+                                isLoggedIn: true,
                             })
                         );
                     }
@@ -46,7 +44,7 @@ const AppWrapper = ({
             }
         };
         fetchUserData();
-    }, []);
+    }, [dispatch, router]);
 
     return (
         <Template>

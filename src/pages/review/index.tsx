@@ -1,7 +1,11 @@
-
+import Review from '@/components/Review';
 
 const review = () => {
-    return <div>review</div>;
+  return (
+    <>
+      <Review />
+    </>
+  );
 };
 
-export default review
+export default review;

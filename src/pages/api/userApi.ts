@@ -2,11 +2,17 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:4000/api/user';
 
-export const getUserDataByToken = async (token: string) => {
+export const getUser = async (token: string) => {
     try {
-        const response = await axios.post(`${API_URL}/verify-token-user`, {
-            token,
-        });
+        const response = await axios.post(
+            `${API_URL}/get-user`,
+            {},
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
         return response.data;
     } catch (error: any) {
         console.error('API 요청 실패: ', error);

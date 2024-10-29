@@ -5,7 +5,6 @@ import s1_3 from '../assets/image/s1-3.jpg';
 import s1_4 from '../assets/image/s1-4.jpg';
 import s1_5 from '../assets/image/s1-5.jpg';
 import s1_6 from '../assets/image/s1-6.jpg';
-import exp from 'constants';
 const space: Space[] = [
     {
         id: 1,

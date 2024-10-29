@@ -1,12 +1,12 @@
-import React, { memo, ReactNode, useState } from "react";
+import React, { memo, ReactNode, useState } from 'react';
 
-import { SidebarStyled } from "./styled";
+import { SidebarStyled } from './styled';
 
-import { Layout } from "antd";
-import clsx from "clsx";
-import SideBar from "@/utill/createSideMenu";
-import { useSelector } from "react-redux";
-import { RootState } from "@/utill/redux/store";
+import { Layout } from 'antd';
+import clsx from 'clsx';
+import SideBar from '@/utill/createSideMenu';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/utill/redux/store';
 
 export interface SidebarProps {
   className?: string;
@@ -15,9 +15,8 @@ export interface SidebarProps {
 
 const Sidebar = ({ className, children }: SidebarProps) => {
   const role = useSelector((state: RootState) => state.user.role);
-  console.log(role,'롤')
   return (
-    <SidebarStyled className={clsx("Sidebar", className)}>
+    <SidebarStyled className={clsx('Sidebar', className)}>
       <div>
         <Layout>
           <Layout.Sider width={200}>
@@ -32,7 +31,7 @@ const Sidebar = ({ className, children }: SidebarProps) => {
                 minHeight: 280,
               }}
             >
-              <div style={{ padding: "24px" }}>{children}</div>
+              <div style={{ padding: '24px' }}>{children}</div>
             </Layout.Content>
           </Layout>
         </Layout>
