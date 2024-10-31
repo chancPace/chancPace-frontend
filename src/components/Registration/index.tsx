@@ -46,14 +46,14 @@ const Registration = () => {
 
     // 각각의 시작 시간과 종료 시간을 'HH:mm' 형식으로 변환하여 추가
     const businessStartTime = values.businessStartTime
-      ? dayjs(values.businessStartTime).format('HH:mm')
-      : '';
+      ? parseInt(dayjs(values.businessStartTime).format('HH:mm'), 10)
+      : 0;
     const businessEndTime = values.businessEndTime
-      ? dayjs(values.businessEndTime).format('HH:mm')
-      : '';
+      ? parseInt(dayjs(values.businessEndTime).format('HH:mm'), 10)
+      : 0;
 
-    formData.append('businessStartTime', businessStartTime);
-    formData.append('businessEndTime', businessEndTime);
+    formData.append('businessStartTime', businessStartTime.toString());
+    formData.append('businessEndTime', businessEndTime.toString());
 
     Object.keys(values).forEach((key) => {
       if (key !== 'businessStartTime' && key !== 'businessEndTime') {
