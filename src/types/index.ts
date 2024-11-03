@@ -4,7 +4,7 @@ export interface Category {
     pId: number | null;
 }
 
-export interface Space {
+export interface SpaceType {
     id: number;
     spaceName: string;
     spaceLocation: string;

@@ -5,12 +5,14 @@ interface UserState {
   name: string | null;
   role: string | null;
   isLoggedIn: boolean;
+  id: number | null;
 }
 const initialState: UserState = {
   email: null,
   name: null,
   role: null,
   isLoggedIn: false,
+  id: null,
 };
 
 const userSlice = createSlice({
@@ -21,13 +23,15 @@ const userSlice = createSlice({
       state.email = action.payload.email;
       state.name = action.payload.name;
       state.role = action.payload.role;
-      state.isLoggedIn = action.payload.isLoggedIn; // isLoggedIn 값을 추가합니다.
+      state.isLoggedIn = action.payload.isLoggedIn; 
+      state.id = action.payload.id
     },
     clearUser: (state) => {
       state.email = null;
       state.name = null;
       state.role = null;
       state.isLoggedIn = false;
+      state.id =  null
     },
   },
 });

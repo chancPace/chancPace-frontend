@@ -13,7 +13,7 @@ import {
   UploadFile,
   message,
 } from 'antd';
-import { addNewSpace } from '@/pages/api/spaceApi';
+import { addNewSpace, getOneSpace, updateSpace } from '@/pages/api/spaceApi';
 const { TextArea } = Input;
 import { getCategories } from '@/pages/api/categoryApi';
 import { useRouter } from 'next/router';
@@ -21,9 +21,12 @@ import { useRouter } from 'next/router';
 const Registration = () => {
   const router = useRouter();
   const [form] = Form.useForm();
+  const { spaceId } = router.query;
   const [categories, setCategories] = useState<Category[]>([]);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [startHour, setStartHour] = useState<number | null>(null);
+
+  const isEditMode = !!spaceId;
 
   //00부터 24까지의 시간 생성(영업시간)
   const timeOption = Array.from({ length: 25 }, (_, i) => ({
@@ -71,16 +74,47 @@ const Registration = () => {
       formData.append('image', file.originFileObj as Blob);
     });
 
+    if (isEditMode) {
+      formData.append('spaceId', spaceId as string);
+    }
+
     try {
-      await addNewSpace(formData);
-      message.success('공간 등록 성공');
+      if (isEditMode) {
+        formData.append('spaceId', String(spaceId));
+        await updateSpace(formData, String(spaceId));
+        message.success('공간 수정 성공');
+      } else {
+        await addNewSpace(formData);
+        message.success('공간 등록 성공');
+      }
       form.resetFields();
       setFileList([]);
       router.push('/myspace');
     } catch (error) {
-      message.error('공간 등록 실패');
+      message.error(isEditMode ? '공간 수정 실패' : '공간 등록 실패');
     }
   };
+
+  //수정 해당 공간의 데이터 불러오기
+  useEffect(() => {
+    // 수정할 공간의 데이터 불러오기
+    const fetchSpaceData = async () => {
+      if (spaceId) {
+        try {
+          const id = Array.isArray(spaceId) ? spaceId[0] : spaceId; // spaceId가 배열일 경우 첫 번째 요소를 사용
+          const response = await getOneSpace(id);
+          const spaceData = response.data;
+          form.setFieldsValue({
+            ...form.getFieldsValue(), // 기존 폼의 값들
+            ...spaceData, // 서버에서 가져온 데이터로 덮어쓰기
+          });
+        } catch (error) {
+          message.error('공간 정보를 불러오는 데 실패했습니다.');
+        }
+      }
+    };
+    fetchSpaceData();
+  }, [spaceId, form]);
 
   return (
     <RegistrationStyled>
@@ -369,8 +403,8 @@ const Registration = () => {
           <Input />
         </Form.Item>
         <Form.Item className="btn-box">
-          <Button type="primary" htmlType="submit" className="btn">
-            등록하기
+          <Button type="primary" htmlType="submit">
+            {isEditMode ? '수정하기' : '등록하기'} {/* 버튼 텍스트 변경 */}
           </Button>
         </Form.Item>
       </Form>

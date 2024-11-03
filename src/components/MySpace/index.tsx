@@ -1,48 +1,85 @@
-// import { getSpaces } from '@/pages/api/spaceApi';
-import { Button, Card, List, message } from 'antd';
 import { useEffect, useState } from 'react';
 import { MySpaceStyled } from './styled';
-import { space } from '@/utill/data';
-import { FaRegTrashAlt } from 'react-icons/fa';
+import { Space, Table } from 'antd';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/utill/redux/store';
+import { useRouter } from 'next/router';
+import { getMySpace } from '@/pages/api/spaceApi';
+import { SpaceType } from '@/types';
+const { Column } = Table;
 
 const MySpace = () => {
-    // const [spaces, setSpaces] = useState([]);
-    // const fetchSpaces = async () => {
-    //     try {
-    //         const spacesData = await getSpaces();
-    //         setSpaces(spacesData.data);
-    //     } catch (error) {
-    //         message.error('공간 목록을 불러오는 데 실패했습니다.');
-    //     }
-    // };
+  const router = useRouter();
+  const [space, setSpace] = useState([]);
+  const userId = useSelector((state: RootState) => state.user.id); // 리덕스에서 userId 가져옴
 
-    // useEffect(() => {
-    //     fetchSpaces();
-    // }, []);
-    return (
-        <MySpaceStyled>
-            <p>공간조회</p>
-            <List
-                grid={{ gutter: 16, column: 2 }}
-                dataSource={space}
-                renderItem={(x) => {
-                    // console.log(x,'data')
-                    return (
-                        <List.Item>
-                            <Card title={x.spaceName}>
-                                <img src={x.spaceImg[0].src}></img>
-                                <div className="button-box">
-                                    <Button>수정하기</Button>
-                                    <div className="trash">
-                                        <FaRegTrashAlt />
-                                    </div>
-                                </div>
-                            </Card>
-                        </List.Item>
-                    );
-                }}
-            />
-        </MySpaceStyled>
-    );
+  const handleEdit = (spaceId: number) => {
+    router.push({
+      pathname: '/registration', // 경로 설정
+      query: { spaceId }, // spaceId를 쿼리로 전달
+    });
+  };
+
+  useEffect(() => {
+    const fetchSpace = async () => {
+      if (userId !== null) {
+        try {
+          const response = await getMySpace(userId);
+          setSpace(response.data);
+        } catch (error) {
+          console.error('공간을 불러오지 못했습니다.', error);
+        }
+      }
+    };
+    fetchSpace();
+  }, [userId]);
+
+  return (
+    <MySpaceStyled>
+      <Table<SpaceType> dataSource={space} rowKey="spaceId">
+        <Column title="공간 번호" dataIndex="id" key="id" />
+        <Column title="공간 이름" dataIndex="spaceName" key="spaceName" />
+        <Column
+          title="등록일"
+          dataIndex="createdAt"
+          key="createdAt"
+          render={(createdAt: string) =>
+            new Date(createdAt).toLocaleDateString()
+          }
+        />
+        <Column title="주소" dataIndex="spaceLocation" key="spaceLocation" />
+        <Column
+          title="영업시간"
+          key="spaceTime"
+          dataIndex="spaceTime"
+          render={(_, record) =>
+            `${record.businessStartTime}:00 - ${record.businessEndTime}:00`
+          }
+        />
+        <Column
+          title="금액/시간당"
+          dataIndex="spacePrice"
+          key="spacePrice"
+          render={(price: number) => price.toLocaleString()}
+        />
+        <Column
+          title="할인금액/시간당"
+          dataIndex="discount"
+          key="discount"
+          render={(discount: number) => discount.toLocaleString()}
+        />
+        <Column
+          title="Action"
+          key="action"
+          render={(_: any, record) => (
+            <Space size="middle">
+              <a onClick={() => handleEdit(record.id)}>수정</a>
+              <a>삭제</a>
+            </Space>
+          )}
+        />
+      </Table>
+    </MySpaceStyled>
+  );
 };
 export default MySpace;

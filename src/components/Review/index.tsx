@@ -26,18 +26,10 @@ const Review = () => {
         renderItem={(item, index) => (
           <List.Item>
             <List.Item.Meta
-              avatar={
-                <Avatar
-                  src={`https://api.dicebear.com/7.x/miniavs/svg?seed=${index}`}
-                />
-              }
               title={item.title}
               description={
                 <div>
                   <p>후기내용</p>
-                  <div className="review-img-box">
-                    <img src={img1.src}></img>
-                  </div>
                 </div>
               }
             />
