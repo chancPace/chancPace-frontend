@@ -17,9 +17,12 @@ export interface Space {
     isOpen: boolean; // 공간이 열려 있는지 여부
     guidelines: string[]; // 주의사항 (문자열 배열)
     categoryId: number;
-    Minimum: number; // 최소 인원
-    Maximum: number; // 최대 인원
+    minGuests: number; // 최소 인원
+    maxGuests: number; // 최대 인원
     spaceImg: { src: string }[]; // 공간 이미지 배열
     businessStartTime: number;
     businessEndTime: number;
+    spaceAdminName: string;
+    spaceAdminPhoneNumber:string;
+
 }

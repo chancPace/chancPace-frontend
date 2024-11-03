@@ -1,5 +1,5 @@
 import { RegistrationStyled } from './styled';
-import React, { Children, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import { Category } from '../../types';
 import {
@@ -12,15 +12,10 @@ import {
   Upload,
   UploadFile,
   message,
-  TimePicker,
 } from 'antd';
 import { addNewSpace } from '@/pages/api/spaceApi';
 const { TextArea } = Input;
-import { Space } from '../../types';
-import Cookies from 'js-cookie';
 import { getCategories } from '@/pages/api/categoryApi';
-import dayjs from 'dayjs';
-import { AxiosError } from 'axios';
 import { useRouter } from 'next/router';
 
 const Registration = () => {
@@ -28,7 +23,15 @@ const Registration = () => {
   const [form] = Form.useForm();
   const [categories, setCategories] = useState<Category[]>([]);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [startHour, setStartHour] = useState<number | null>(null);
 
+  //00부터 24까지의 시간 생성(영업시간)
+  const timeOption = Array.from({ length: 25 }, (_, i) => ({
+    label: i.toString().padStart(2, '0') + ':00',
+    value: i,
+  }));
+
+  //카테고리 목록 불러오기
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -41,66 +44,7 @@ const Registration = () => {
     fetchCategories();
   }, []);
 
-  const handleSubmit = async (values: Space) => {
-    const formData = new FormData();
-
-    // 각각의 시작 시간과 종료 시간을 'HH:mm' 형식으로 변환하여 추가
-    const businessStartTime = values.businessStartTime
-      ? parseInt(dayjs(values.businessStartTime).format('HH:mm'), 10)
-      : 0;
-    const businessEndTime = values.businessEndTime
-      ? parseInt(dayjs(values.businessEndTime).format('HH:mm'), 10)
-      : 0;
-
-    formData.append('businessStartTime', businessStartTime.toString());
-    formData.append('businessEndTime', businessEndTime.toString());
-
-    Object.keys(values).forEach((key) => {
-      if (key !== 'businessStartTime' && key !== 'businessEndTime') {
-        formData.append(key, values[key as keyof Space].toString());
-      }
-    });
-
-    fileList.forEach((file) => {
-      formData.append('image', file.originFileObj as Blob);
-    });
-
-    const token = Cookies.get('token');
-    if (!token) {
-      message.error('로그인이 필요합니다.');
-      return;
-    }
-    formData.append('userInfo', JSON.stringify({ token }));
-
-    try {
-      await addNewSpace(formData);
-      message.success('공간 등록 성공');
-      form.resetFields();
-      router.push('/myspace');
-    } catch (error) {
-      const axiosError = error as AxiosError;
-      // 오류가 발생했을 때 상태 코드에 따라 오류 메시지 설정
-      if (axiosError.response && axiosError.response.status) {
-        const status = axiosError.response.status;
-
-        if (status === 422) {
-          // 예시: 최소 인원이 1명보다 작은 경우
-          form.setFields([
-            {
-              name: 'minGuests',
-              errors: ['최소 인원은 1명 이상이어야 합니다.'],
-            },
-          ]);
-        } else {
-          // 기타 상태 코드 처리
-          message.error('서버 오류가 발생했습니다.');
-        }
-      } else {
-        message.error('서버와 연결할 수 없습니다.');
-      }
-    }
-  };
-
+  //select -> option 카테고리 대분류,소분류 분류하여 나타내기
   const categoryOptions = categories
     .filter((category) => category.pId === null)
     .map((parentCategory) => ({
@@ -113,6 +57,31 @@ const Registration = () => {
         })),
     }));
 
+  //데이터 전송
+  const handleSubmit = async (values: any) => {
+    const formData = new FormData();
+
+    // 일반 데이터 추가
+    Object.keys(values).forEach((key) => {
+      formData.append(key, values[key]);
+    });
+
+    // 파일 데이터 추가
+    fileList.forEach((file) => {
+      formData.append('image', file.originFileObj as Blob);
+    });
+
+    try {
+      await addNewSpace(formData);
+      message.success('공간 등록 성공');
+      form.resetFields();
+      setFileList([]);
+      router.push('/myspace');
+    } catch (error) {
+      message.error('공간 등록 실패');
+    }
+  };
+
   return (
     <RegistrationStyled>
       <p>공간정보를 입력해주세요</p>
@@ -124,22 +93,24 @@ const Registration = () => {
         layout="horizontal"
         onFinish={handleSubmit}
         initialValues={{
-          spaceName: 'test',
-          spaceLocation: 'test',
-          description: 'test',
-          spacePrice: 10000,
-          discount: 1000,
-          amenities: 'test',
+          spaceName: '공간 타이틀',
+          spaceLocation: '서울시 마포구',
+          description: '설명입니다',
+          spacePrice: 30000,
+          discount: 2000,
+          amenities: '편의시설입니다',
           spaceStatus: 'AVAILABLE',
           isOpen: true,
-          guidelines: 'test',
+          guidelines: '주의사항입니다',
           minGuests: 1,
-          maxGuests: 1,
-          cleanTime: 30,
+          maxGuests: 3,
+          cleanTime: 0,
           businessStartTime: '',
           businessEndTime: '',
-          categoryId: 1,
-          addPrice: 5000,
+          categoryId: '',
+          addPrice: 2000,
+          spaceAdminName: '호스트이름',
+          spaceAdminPhoneNumber: '010-0000-0000',
         }}
       >
         <Form.Item
@@ -241,8 +212,8 @@ const Registration = () => {
           ]}
         >
           <Select>
-            <Select.Option value="30">30</Select.Option>
-            <Select.Option value="60">60</Select.Option>
+            <Select.Option value="1">1</Select.Option>
+            <Select.Option value="2">2</Select.Option>
           </Select>
         </Form.Item>
         <Form.Item label="공개여부" valuePropName="checked" name="isOpen">
@@ -283,34 +254,33 @@ const Registration = () => {
         >
           <InputNumber />
         </Form.Item>
-
-        {/* 시작 시간 */}
         <Form.Item
           label="영업 시작 시간"
           name="businessStartTime"
-          rules={[
-            {
-              required: true,
-              message: '영업시간을 선택해주세요',
-            },
-          ]}
+          rules={[{ required: true, message: '영업 시작 시간을 선택해주세요' }]}
         >
-          <TimePicker use12Hours format="HH:mm" />
+          <Select
+            options={timeOption}
+            placeholder="시작 시간을 선택하세요"
+            onChange={(value) => {
+              setStartHour(value); // 선택된 시작 시간 상태로 저장
+              form.setFieldsValue({ businessEndTime: null }); // 종료 시간 초기화
+            }}
+          />
         </Form.Item>
-
-        {/* 종료 시간 */}
         <Form.Item
           label="영업 종료 시간"
           name="businessEndTime"
           rules={[
-            {
-              required: true,
-              message: '영업 종료 시간을 선택해주세요.',
-            },
+            { required: true, message: '영업 종료 시간을 선택해주세요' },
             ({ getFieldValue }) => ({
               validator(_, value) {
-                const startTime = getFieldValue('businessStartTime');
-                if (!startTime || !value || value.isAfter(startTime)) {
+                const startValue = getFieldValue('businessStartTime');
+                if (
+                  value !== null &&
+                  startValue !== null &&
+                  value > startValue
+                ) {
                   return Promise.resolve();
                 }
                 return Promise.reject(
@@ -320,7 +290,11 @@ const Registration = () => {
             }),
           ]}
         >
-          <TimePicker use12Hours format="HH:mm" />
+          <Select
+            options={timeOption.filter((opt) => opt.value > (startHour ?? -1))}
+            placeholder="종료 시간을 선택하세요"
+            disabled={startHour === null} // 시작 시간이 선택되지 않았을 때 비활성화
+          />
         </Form.Item>
 
         <Form.Item label="공간 상태" name="spaceStatus">
@@ -369,6 +343,30 @@ const Registration = () => {
               </div>
             )}
           </Upload>
+        </Form.Item>
+        <Form.Item
+          label="호스트이름"
+          name="spaceAdminName"
+          rules={[
+            {
+              required: true,
+              message: '호스트 이름을 입력해주세요',
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          label="호스트 전화번호"
+          name="spaceAdminPhoneNumber"
+          rules={[
+            {
+              required: true,
+              message: '전화번호를 입력해주세요(-포함)',
+            },
+          ]}
+        >
+          <Input />
         </Form.Item>
         <Form.Item className="btn-box">
           <Button type="primary" htmlType="submit" className="btn">
