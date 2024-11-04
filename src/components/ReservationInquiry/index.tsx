@@ -77,9 +77,16 @@ const ReservationInquiry = () => {
       const fetchReservation = async (userId: number) => {
         try {
           const response = await getMySpace(userId);
-          console.log(response.data, '리스펀스');
-          const reservations = response.data[0].Bookings.map(
-            (booking: any) => ({})
+          console.log(response,'리스펀스')
+          const reservations = response.data.flatMap((space: any) =>
+            space.Bookings.map((booking: any) => ({
+              key: booking.id,
+              name: booking.User?.userName || '예약자 이름',
+              date: booking.startDate,
+              time: `${booking.startTime}:00 - ${booking.endTime}:00`,
+              phoneNumber: booking.User?.phoneNumber || '전화번호 없음',
+              bookingStatus: booking.bookingStatus,
+            }))
           );
           setData(reservations);
         } catch (error) {
