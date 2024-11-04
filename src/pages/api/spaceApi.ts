@@ -63,3 +63,4 @@ export const updateSpace = async (spaceData: FormData, spaceId: string) => {
     throw error;
   }
 };
+

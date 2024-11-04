@@ -5,90 +5,86 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/utill/redux/store';
 
 export const createSidebarMenus = (
-    menus: MenuProps['items']
+  menus: MenuProps['items']
 ): MenuProps['items'] => {
-    if (!menus) return menus;
+  if (!menus) return menus;
 
-    return menus.map((menu) => {
-        if (!menu || !('label' in menu)) return menu;
-        if ('children' in menu) {
-            return {
-                ...menu,
-                children: createSidebarMenus(menu.children) || [],
-            };
-        }
+  return menus.map((menu) => {
+    if (!menu || !('label' in menu)) return menu;
+    if ('children' in menu) {
+      return {
+        ...menu,
+        children: createSidebarMenus(menu.children) || [],
+      };
+    }
 
-        return {
-            ...menu,
-            label: <Link href={menu.key as string}>{menu.label}</Link>,
-        };
-    });
+    return {
+      ...menu,
+      label: <Link href={menu.key as string}>{menu.label}</Link>,
+    };
+  });
 };
 
 const SideBar = () => {
-    const router = useRouter();
-    const role = useSelector((state: RootState) => state.user.role); // role을 가져옴
+  const router = useRouter();
+  const role = useSelector((state: RootState) => state.user.role); // role을 가져옴
 
-    const sidebarMenus = createSidebarMenus([
+  const sidebarMenus = createSidebarMenus([
+    {
+      key: '/',
+      label: `대쉬보드`,
+    },
+    {
+      key: '/space',
+      label: '공간 관리',
+      children: [
         {
-            key: '/',
-            label: `대쉬보드`,
+          key: '/registration',
+          label: '공간 등록',
         },
         {
-            key: '/space',
-            label: '공간 관리',
-            children: [
-                {
-                    key: '/registration',
-                    label: '공간 등록',
-                },
-                {
-                    key: '/myspace',
-                    label: '공간 조회',
-                },
-            ],
+          key: '/myspace',
+          label: '공간 조회',
+        },
+      ],
+    },
+    {
+      key: '/reservation',
+      label: '예약',
+      children: [
+        {
+          key: '/reservation/calendar',
+          label: '예약 캘린더',
         },
         {
-            key: '/reservation',
-            label: '예약',
-            children: [
-                {
-                    key: '/reservation/calendar',
-                    label: '예약 캘린더',
-                },
-                {
-                    key: '/reservation/inquiry',
-                    label: '예약 조회',
-                },
-                // {
-                //     key: '/reservation/details',
-                //     label: '상세 조회',
-                // },
-            ],
+          key: '/reservation/inquiry',
+          label: '예약 조회',
         },
-        {
-            key: '/qa',
-            label: '문의',
-        },
-        {
-            key: '/review',
-            label: '리뷰조회',
-        },
-        {
-            key: '/sales',
-            label: '매출조회',
-        },
-    ]);
+      ],
+    },
+    {
+      key: '/qa',
+      label: '문의',
+    },
+    {
+      key: '/review',
+      label: '리뷰조회',
+    },
+    {
+      key: '/sales',
+      label: '매출조회',
+    },
+  ]);
 
-    return (
-        <Menu
-            mode="inline"
-            items={sidebarMenus}
-            selectedKeys={[router.pathname]}
-            defaultOpenKeys={router.pathname.split('/').slice(1, -1)}
-            style={{ height: '100%', borderRight: 0 }}
-        />
-    );
+  return (
+    <Menu
+      mode="inline"
+      items={sidebarMenus}
+      selectedKeys={[router.pathname]}
+      defaultOpenKeys={router.pathname.split('/').slice(1, -1)}
+      style={{ height: '100%', borderRight: 0 }}
+    />
+  );
 };
 
 export default SideBar;
