@@ -13,13 +13,13 @@ interface DataType {
   key: React.Key;
   bookingStatus: string;
   createdAt: string;
-  endTime:number;
-  id:number;
-  spaceId:number;
-  startData:string;
-  startTime:number;
-  updatedAt:string;
-  userId:number
+  endTime: number;
+  id: number;
+  spaceId: number;
+  startData: string;
+  startTime: number;
+  updatedAt: string;
+  userId: number;
 }
 
 const columns: TableColumnsType<DataType> = [
@@ -40,16 +40,9 @@ const columns: TableColumnsType<DataType> = [
     dataIndex: 'time',
   },
   {
-    title: '인원',
-    dataIndex: 'personnel',
-  },
-  {
-    title: '요청사항',
-    dataIndex: 'request',
-  },
-  {
-    title: '상태',
-    dataIndex: 'state',
+    title: '전화번호',
+    dataIndex: 'phoneNumber',
+    width: '20%',
   },
 ];
 
@@ -85,9 +78,10 @@ const ReservationInquiry = () => {
         try {
           const response = await getMySpace(userId);
           console.log(response.data, '리스펀스');
-          const reservation = response
-
-
+          const reservations = response.data[0].Bookings.map(
+            (booking: any) => ({})
+          );
+          setData(reservations);
         } catch (error) {
           console.error('예약 데이터를 불러오는 데 실패했습니다:', error);
         }
