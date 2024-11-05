@@ -4,7 +4,7 @@ import { Space, Table } from 'antd';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/utill/redux/store';
 import { useRouter } from 'next/router';
-import { getMySpace } from '@/pages/api/spaceApi';
+import { getMySpace, updateSpace } from '@/pages/api/spaceApi';
 import { SpaceType } from '@/types';
 const { Column } = Table;
 
@@ -19,13 +19,15 @@ const MySpace = () => {
       query: { spaceId }, // spaceId를 쿼리로 전달
     });
   };
-
   useEffect(() => {
     const fetchSpace = async () => {
       if (userId !== null) {
         try {
           const response = await getMySpace(userId);
-          setSpace(response.data);
+          const openSpace = response?.data?.filter((x: SpaceType, i: number) => {
+            return x.isOpen === true;
+          });
+          setSpace(openSpace);
         } catch (error) {
           console.error('공간을 불러오지 못했습니다.', error);
         }
@@ -43,18 +45,16 @@ const MySpace = () => {
           title="등록일"
           dataIndex="createdAt"
           key="createdAt"
-          render={(createdAt: string) =>
-            new Date(createdAt).toLocaleDateString()
-          }
+          render={(createdAt: string) => new Date(createdAt).toLocaleDateString()}
         />
         <Column title="주소" dataIndex="spaceLocation" key="spaceLocation" />
         <Column
           title="영업시간"
           key="spaceTime"
           dataIndex="spaceTime"
-          render={(_, record) =>
-            `${record.businessStartTime}:00 - ${record.businessEndTime}:00`
-          }
+          render={(_, record) => {
+            return `${record?.businessStartTime}:00 - ${record.businessEndTime}:00`;
+          }}
         />
         <Column
           title="금액/시간당"
@@ -74,7 +74,7 @@ const MySpace = () => {
           render={(_: any, record) => (
             <Space size="middle">
               <a onClick={() => handleEdit(record.id)}>수정</a>
-              <a>삭제</a>
+              <a onClick={() => handleEdit(record.id)}>삭제</a>
             </Space>
           )}
         />

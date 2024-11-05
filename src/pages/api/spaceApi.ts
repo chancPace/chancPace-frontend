@@ -46,16 +46,12 @@ export const getOneSpace = async (spaceId: string) => {
 export const updateSpace = async (spaceData: FormData, spaceId: string) => {
   try {
     const token = Cookies.get('token');
-    const response = await axios.patch(
-      `${API_URL}/update-space?spaceId=${spaceId}`,
-      spaceData,
-      {
-        headers: {
-          // 'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await axios.patch(`${API_URL}/update-space?spaceId=${spaceId}`, spaceData, {
+      headers: {
+        // 'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${token}`,
+      },
+    });
     console.log(response, '리스펀스 api');
     return response.data;
   } catch (error) {
@@ -63,4 +59,3 @@ export const updateSpace = async (spaceData: FormData, spaceId: string) => {
     throw error;
   }
 };
-

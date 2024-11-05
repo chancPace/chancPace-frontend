@@ -2,17 +2,7 @@ import { RegistrationStyled } from './styled';
 import React, { useEffect, useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import { Category } from '../../types';
-import {
-  Form,
-  Input,
-  Button,
-  Select,
-  InputNumber,
-  Switch,
-  Upload,
-  UploadFile,
-  message,
-} from 'antd';
+import { Form, Input, Button, Select, InputNumber, Switch, Upload, UploadFile, message } from 'antd';
 import { addNewSpace, getOneSpace, updateSpace } from '@/pages/api/spaceApi';
 const { TextArea } = Input;
 import { getCategories } from '@/pages/api/categoryApi';
@@ -171,15 +161,8 @@ const Registration = () => {
         >
           <Input />
         </Form.Item>
-        <Form.Item
-          label="카테고리"
-          name="categoryId"
-          rules={[{ required: true, message: '카테고리를 선택해주세요' }]}
-        >
-          <Select
-            placeholder="카테고리를 선택해주세요"
-            options={categoryOptions}
-          />
+        <Form.Item label="카테고리" name="categoryId" rules={[{ required: true, message: '카테고리를 선택해주세요' }]}>
+          <Select placeholder="카테고리를 선택해주세요" options={categoryOptions} />
         </Form.Item>
         <Form.Item
           label="공간 소개"
@@ -279,9 +262,7 @@ const Registration = () => {
                 if (minGuests === undefined || value >= minGuests) {
                   return Promise.resolve();
                 }
-                return Promise.reject(
-                  new Error('최대 인원은 최소 인원보다 크거나 같아야 합니다.')
-                );
+                return Promise.reject(new Error('최대 인원은 최소 인원보다 크거나 같아야 합니다.'));
               },
             }),
           ]}
@@ -310,16 +291,10 @@ const Registration = () => {
             ({ getFieldValue }) => ({
               validator(_, value) {
                 const startValue = getFieldValue('businessStartTime');
-                if (
-                  value !== null &&
-                  startValue !== null &&
-                  value > startValue
-                ) {
+                if (value !== null && startValue !== null && value > startValue) {
                   return Promise.resolve();
                 }
-                return Promise.reject(
-                  new Error('종료 시간은 시작 시간보다 이후여야 합니다.')
-                );
+                return Promise.reject(new Error('종료 시간은 시작 시간보다 이후여야 합니다.'));
               },
             }),
           ]}
