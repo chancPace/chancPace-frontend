@@ -8,7 +8,8 @@ import { getMySpace } from '@/pages/api/spaceApi';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/utill/redux/store';
-const { RangePicker } = DatePicker;
+import { useRouter } from 'next/router';
+
 interface DataType {
   key: React.Key;
   bookingStatus: string;
@@ -20,15 +21,24 @@ interface DataType {
   startTime: number;
   updatedAt: string;
   userId: number;
+  paymentId: number;
 }
 
 const columns: TableColumnsType<DataType> = [
+  {
+    title: '순서',
+    dataIndex: 'paymentId',
+  },
+  {
+    title: '공간명',
+    dataIndex: 'spaceName',
+  },
   {
     title: '예약자',
     dataIndex: 'name',
     width: '10%',
     render: (text, record) => (
-      <Link href={`/reservation/details?id=${record.key}`}>{text}</Link>
+      <Link href={`/reservation/details?id=${record.paymentId}`}>{text}</Link>
     ),
   },
   {
@@ -44,30 +54,15 @@ const columns: TableColumnsType<DataType> = [
     dataIndex: 'phoneNumber',
     width: '20%',
   },
-];
-
-const data: DataType[] = [
-  // {
-  //   key: '1',
-  //   name: 'test1',
-  //   date: '2024-10-28',
-  //   time: '12:00 - 15:00',
-  //   personnel: '5',
-  //   request: '요청사항없음',
-  //   state: '미승인',
-  // },
-  // {
-  //   key: '2',
-  //   name: 'test2',
-  //   date: '2024-10-28',
-  //   time: '12:00 - 15:00',
-  //   personnel: '5',
-  //   request: '요청사항없음',
-  //   state: '승인',
-  // },
+  {
+    title: '금액',
+    dataIndex: 'paymentAmount',
+    width: '20%',
+  },
 ];
 
 const ReservationInquiry = () => {
+  const router = useRouter();
   const userId = useSelector((state: RootState) => state.user.id); // 리덕스에서 userId 가져옴
   // console.log(userId, '유저아이디');
   const [data, setData] = useState<DataType[]>([]); // 예약 데이터를 저장할 상태
@@ -77,16 +72,20 @@ const ReservationInquiry = () => {
       const fetchReservation = async (userId: number) => {
         try {
           const response = await getMySpace(userId);
-          console.log(response,'리스펀스')
           const reservations = response.data.flatMap((space: any) =>
-            space.Bookings.map((booking: any) => ({
-              key: booking.id,
-              name: booking.User?.userName || '예약자 이름',
-              date: booking.startDate,
-              time: `${booking.startTime}:00 - ${booking.endTime}:00`,
-              phoneNumber: booking.User?.phoneNumber || '전화번호 없음',
-              bookingStatus: booking.bookingStatus,
-            }))
+            space.Bookings.flatMap((booking: any) =>
+              booking.User?.Payments.map((payment: any) => ({
+                key: booking.id,
+                name: booking.User?.userName || '예약자 이름',
+                date: booking.startDate,
+                time: `${booking.startTime}:00 - ${booking.endTime}:00`,
+                phoneNumber: booking.User?.phoneNumber || '전화번호 없음',
+                bookingStatus: booking.bookingStatus,
+                paymentAmount: payment.paymentPrice,
+                spaceName: space.spaceName || '공간명 없음',
+                paymentId: payment.id,
+              }))
+            )
           );
           setData(reservations);
         } catch (error) {
@@ -97,15 +96,24 @@ const ReservationInquiry = () => {
     }
   }, [userId]);
 
+  const handleRowClick = (record: DataType) => {
+    router.push(`/reservation/details?id=${record.paymentId}`);
+  };
+
   return (
     <ReservationInquiryStyled>
       <Form className="search-section">
-        <RangePicker />
         <Input />
         <Button>검색</Button>
       </Form>
       <div className="inquiry-section">
-        <Table<DataType> columns={columns} dataSource={data} />
+        <Table<DataType>
+          columns={columns}
+          dataSource={data}
+          onRow={(record) => ({
+            onClick: () => handleRowClick(record),
+          })}
+        />
       </div>
     </ReservationInquiryStyled>
   );

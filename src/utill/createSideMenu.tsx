@@ -50,17 +50,7 @@ const SideBar = () => {
     },
     {
       key: '/reservation',
-      label: '예약',
-      children: [
-        {
-          key: '/reservation/calendar',
-          label: '예약 캘린더',
-        },
-        {
-          key: '/reservation/inquiry',
-          label: '예약 조회',
-        },
-      ],
+      label: '예약조회',
     },
     {
       key: '/qa',
