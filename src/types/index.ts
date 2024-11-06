@@ -24,4 +24,53 @@ export interface SpaceType {
   businessEndTime: number;
   spaceAdminName: string;
   spaceAdminPhoneNumber: string;
+  Images?: {
+    imageUrl: string;
+  }[];
+  Reviews?: {
+    User?: {
+      userName: string;
+    };
+    reviewComment: string;
+    reviewRating: number;
+    createdAt: string;
+    reviewStatus: string;
+    updatedAt:string
+    id:number
+  }[];
+}
+
+export interface Image {
+  id: number;
+  imageUrl: string;
+  spaceId: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface User {
+  id: number;
+  userName: string;
+  email: string;
+  accountStatus: string;
+  review: [Review];
+}
+
+export interface Review {
+  id: number;
+  reviewComment: string;
+  reviewRating: number | null;
+  reviewStatus: string;
+  spaceId: number;
+  createdAt: string;
+  User: User;
+}
+
+export interface Booking {
+  id: number;
+  startDate: string;
+  startTime: number;
+  endTime: number;
+  bookingStatus: string;
+  // 다른 필요한 Booking 속성 추가
 }

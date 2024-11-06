@@ -4,13 +4,14 @@ import { Space, Table } from 'antd';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/utill/redux/store';
 import { useRouter } from 'next/router';
-import { getMySpace, updateSpace } from '@/pages/api/spaceApi';
+import { getMySpace,} from '@/pages/api/spaceApi';
 import { SpaceType } from '@/types';
 const { Column } = Table;
 
 const MySpace = () => {
   const router = useRouter();
   const [space, setSpace] = useState([]);
+  console.log(space, '스페이스스');
   const userId = useSelector((state: RootState) => state.user.id); // 리덕스에서 userId 가져옴
 
   const handleEdit = (spaceId: number) => {
@@ -24,9 +25,11 @@ const MySpace = () => {
       if (userId !== null) {
         try {
           const response = await getMySpace(userId);
-          const openSpace = response?.data?.filter((x: SpaceType, i: number) => {
-            return x.isOpen === true;
-          });
+          const openSpace = response?.data?.filter(
+            (x: SpaceType, i: number) => {
+              return x.isOpen === true;
+            }
+          );
           setSpace(openSpace);
         } catch (error) {
           console.error('공간을 불러오지 못했습니다.', error);
@@ -45,7 +48,9 @@ const MySpace = () => {
           title="등록일"
           dataIndex="createdAt"
           key="createdAt"
-          render={(createdAt: string) => new Date(createdAt).toLocaleDateString()}
+          render={(createdAt: string) =>
+            new Date(createdAt).toLocaleDateString()
+          }
         />
         <Column title="주소" dataIndex="spaceLocation" key="spaceLocation" />
         <Column
@@ -67,6 +72,14 @@ const MySpace = () => {
           dataIndex="discount"
           key="discount"
           render={(discount: number) => discount.toLocaleString()}
+        />
+        <Column
+          title="상태"
+          dataIndex="spaceStatus"
+          key="spaceStatus"
+          render={(spaceStatus: string) =>
+            spaceStatus === 'AVAILABLE' ? '승인 완료' : '승인 미완료'
+          }
         />
         <Column
           title="Action"
