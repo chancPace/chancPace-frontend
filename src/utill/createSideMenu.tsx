@@ -53,10 +53,6 @@ const SideBar = () => {
       label: '예약조회',
     },
     {
-      key: '/qa',
-      label: '문의',
-    },
-    {
       key: '/review',
       label: '리뷰조회',
     },

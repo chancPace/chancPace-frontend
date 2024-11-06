@@ -9,9 +9,11 @@ import { updateReview } from '@/pages/api/reviewApi';
 const { confirm } = Modal;
 
 const Review = () => {
-  const userId = useSelector((state: RootState) => state.user.id); // 리덕스에서 userId 가져옴
-  const [reviews, setReviews] = useState<SpaceType[]>([]); // 리뷰 데이터를 저장할 상태
-  console.log(reviews, '필터데이터터터');
+  const userId = useSelector((state: RootState) => state.user.id);
+  //리뷰데이터 저장
+  const [reviews, setReviews] = useState<SpaceType[]>([]);
+
+  //리뷰 가져오기 (AVAILABLE 상태인것만)
   useEffect(() => {
     const fetchReview = async () => {
       if (userId) {
@@ -20,13 +22,13 @@ const Review = () => {
           const filteredData = response.data
             .map((space: SpaceType) => ({
               ...space,
-              Reviews: space.Reviews?.filter(
+              reviews: space.reviews?.filter(
                 (review) => review.reviewStatus === 'AVAILABLE'
               ),
             }))
             .filter(
-              (space: SpaceType) => space.Reviews && space.Reviews.length > 0
-            ); // Reviews의 갯수가 0 이상인 것만 남김
+              (space: SpaceType) => space.reviews && space.reviews.length > 0
+            );
 
           setReviews(filteredData);
         } catch (error) {
@@ -37,6 +39,7 @@ const Review = () => {
     fetchReview();
   }, [userId]);
 
+  //삭제버튼 클릭시 상태 변경 및 별점 null처리
   const handleDeleteClick = async (reviewId: number) => {
     const reviewData = {
       reviewComment: '',
@@ -53,6 +56,7 @@ const Review = () => {
     }
   };
 
+  //삭제버튼 클릭시 삭제 확인하는 모달 창 띄우기
   const showDeleteConfirm = (reviewId: number) => {
     confirm({
       title: '리뷰를 삭제하시겠습니까?',
@@ -64,7 +68,7 @@ const Review = () => {
         handleDeleteClick(reviewId); // 확인 버튼 클릭 시 삭제 로직 실행
       },
       onCancel() {
-        console.log('삭제 취소');
+        // console.log('삭제 취소');
       },
     });
   };
@@ -76,14 +80,14 @@ const Review = () => {
           <div className="top">
             <p>{space.spaceName}</p>
           </div>
-          {space.Reviews?.map((review) => (
+          {space.reviews?.map((review) => (
             <div key={review.id}>
               <div className="rating">
-                <Rate disabled defaultValue={review.reviewRating} />
+                <Rate disabled defaultValue={review.reviewRating ?? 0} />
               </div>
               <div className="bottom">
                 <p>
-                  작성자: {review.User ? review.User.userName : '알 수 없음'}
+                  작성자: {review.user ? review.user.userName : '알 수 없음'}
                 </p>
                 <p>리뷰: {review.reviewComment}</p>
                 <p>

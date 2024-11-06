@@ -1,7 +1,8 @@
+import Sales from "@/components/Sales";
 
 
 const sales = () => {
-    return <div>매출조회</div>;
+    return <Sales />;
 };
 
 export default sales;

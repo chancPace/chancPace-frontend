@@ -1,3 +1,5 @@
+import exp from 'constants';
+
 export interface Category {
   id: number;
   categoryName: string;
@@ -24,20 +26,38 @@ export interface SpaceType {
   businessEndTime: number;
   spaceAdminName: string;
   spaceAdminPhoneNumber: string;
-  Images?: {
-    imageUrl: string;
-  }[];
-  Reviews?: {
-    User?: {
-      userName: string;
-    };
-    reviewComment: string;
-    reviewRating: number;
-    createdAt: string;
-    reviewStatus: string;
-    updatedAt:string
-    id:number
-  }[];
+  // images?: {
+  //   imageUrl: string;
+  // }[];
+  // reviews?: {
+  //   user?: {
+  //     userName: string;
+  //   };
+  //   reviewComment: string;
+  //   reviewRating: number;
+  //   createdAt: string;
+  //   reviewStatus: string;
+  //   updatedAt: string;
+  //   id: number;
+  // }[];
+  // bookings?: {
+  //   startDate: string;
+  //   startTime: string;
+  //   endTime: string;
+  //   bookingStatus: string;
+  //   user?: {
+  //     userName: string;
+  //     phoneNumber: string;
+  //     payments?: {
+  //       paymentAmount: string;
+  //       id: number;
+  //     };
+  //   };
+  // };
+  images?: Image[];
+  reviews?: Review[];
+  bookings?: Booking[];
+  user?: User[];
 }
 
 export interface Image {
@@ -53,7 +73,7 @@ export interface User {
   userName: string;
   email: string;
   accountStatus: string;
-  review: [Review];
+  payment?: Payment[];
 }
 
 export interface Review {
@@ -63,7 +83,10 @@ export interface Review {
   reviewStatus: string;
   spaceId: number;
   createdAt: string;
-  User: User;
+  updatedAt: string;
+  user?: {
+    userName: string;
+  };
 }
 
 export interface Booking {
@@ -72,5 +95,26 @@ export interface Booking {
   startTime: number;
   endTime: number;
   bookingStatus: string;
-  // 다른 필요한 Booking 속성 추가
+  user?: {
+    userName: string;
+    phoneNumber: string;
+    payments: { id: number; paymentPrice: number }[];
+  };
+}
+
+export interface Payment {
+  id: number;
+  paymentPrice: number;
+}
+
+export interface Reservation {
+  bookingStatus: string;
+  key: number;
+  name: string;
+  date: string;
+  paymentAmount: number;
+  paymentId: number;
+  phoneNumber: string;
+  spaceName: string;
+  time: string;
 }

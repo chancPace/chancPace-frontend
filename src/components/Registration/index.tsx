@@ -2,7 +2,17 @@ import { RegistrationStyled } from './styled';
 import React, { useEffect, useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import { Category } from '../../types';
-import { Form, Input, Button, Select, InputNumber, Switch, Upload, UploadFile, message } from 'antd';
+import {
+  Form,
+  Input,
+  Button,
+  Select,
+  InputNumber,
+  Switch,
+  Upload,
+  UploadFile,
+  message,
+} from 'antd';
 import { addNewSpace, getOneSpace, updateSpace } from '@/pages/api/spaceApi';
 const { TextArea } = Input;
 import { getCategories } from '@/pages/api/categoryApi';
@@ -15,6 +25,7 @@ const Registration = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [startHour, setStartHour] = useState<number | null>(null);
+  const [fileError, setFileError] = useState<string | null>(null); // 파일 오류 메시지 상태 추가
 
   const isEditMode = !!spaceId;
 
@@ -50,8 +61,21 @@ const Registration = () => {
         })),
     }));
 
+  const handleFileChange = ({ fileList }: { fileList: UploadFile[] }) => {
+    setFileList(fileList);
+    // 파일이 추가되면 오류 메시지를 초기화
+    if (fileList.length > 0) {
+      setFileError(null);
+    }
+  };
+
   //데이터 전송
   const handleSubmit = async (values: any) => {
+    if (fileList.length === 0) {
+      setFileError('이미지는 최소 1장 이상 업로드해야 합니다.');
+      return; // 파일이 없을 경우 제출 중단
+    }
+
     const formData = new FormData();
 
     // 일반 데이터 추가
@@ -161,8 +185,15 @@ const Registration = () => {
         >
           <Input />
         </Form.Item>
-        <Form.Item label="카테고리" name="categoryId" rules={[{ required: true, message: '카테고리를 선택해주세요' }]}>
-          <Select placeholder="카테고리를 선택해주세요" options={categoryOptions} />
+        <Form.Item
+          label="카테고리"
+          name="categoryId"
+          rules={[{ required: true, message: '카테고리를 선택해주세요' }]}
+        >
+          <Select
+            placeholder="카테고리를 선택해주세요"
+            options={categoryOptions}
+          />
         </Form.Item>
         <Form.Item
           label="공간 소개"
@@ -262,7 +293,9 @@ const Registration = () => {
                 if (minGuests === undefined || value >= minGuests) {
                   return Promise.resolve();
                 }
-                return Promise.reject(new Error('최대 인원은 최소 인원보다 크거나 같아야 합니다.'));
+                return Promise.reject(
+                  new Error('최대 인원은 최소 인원보다 크거나 같아야 합니다.')
+                );
               },
             }),
           ]}
@@ -291,10 +324,16 @@ const Registration = () => {
             ({ getFieldValue }) => ({
               validator(_, value) {
                 const startValue = getFieldValue('businessStartTime');
-                if (value !== null && startValue !== null && value > startValue) {
+                if (
+                  value !== null &&
+                  startValue !== null &&
+                  value > startValue
+                ) {
                   return Promise.resolve();
                 }
-                return Promise.reject(new Error('종료 시간은 시작 시간보다 이후여야 합니다.'));
+                return Promise.reject(
+                  new Error('종료 시간은 시작 시간보다 이후여야 합니다.')
+                );
               },
             }),
           ]}
@@ -315,18 +354,14 @@ const Registration = () => {
         <Form.Item
           label="Upload"
           valuePropName="fileList"
-          rules={[
-            {
-              required: true,
-              message: '이미지를 업로드해주세요',
-            },
-          ]}
+          help={fileError} // 오류 메시지 출력
+          validateStatus={fileError ? 'error' : undefined} // 검증 상태 설정
         >
           <Upload
             action="/uploads"
             listType="picture-card"
             fileList={fileList}
-            onChange={({ fileList }) => setFileList(fileList)}
+            onChange={handleFileChange}
             beforeUpload={(file) => {
               const isImage = file.type.startsWith('image/');
               if (!isImage) {
@@ -339,11 +374,9 @@ const Registration = () => {
               showPreviewIcon: false,
               showRemoveIcon: true,
             }}
-            itemRender={(originNode, file) => {
-              return React.cloneElement(originNode, {
-                title: null,
-              });
-            }}
+            itemRender={(originNode) =>
+              React.cloneElement(originNode, { title: null })
+            }
           >
             {fileList.length >= 8 ? null : (
               <div>

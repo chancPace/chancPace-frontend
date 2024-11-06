@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/utill/redux/store';
 import { useRouter } from 'next/router';
+import { Booking, Payment, Reservation, SpaceType } from '@/types';
 
 interface DataType {
   key: React.Key;
@@ -64,22 +65,20 @@ const columns: TableColumnsType<DataType> = [
 const ReservationInquiry = () => {
   const router = useRouter();
   const userId = useSelector((state: RootState) => state.user.id); // 리덕스에서 userId 가져옴
-  // console.log(userId, '유저아이디');
   const [data, setData] = useState<DataType[]>([]); // 예약 데이터를 저장할 상태
-  // console.log(data, '데이터터터ㅓ터텉');
   useEffect(() => {
     if (userId !== null) {
       const fetchReservation = async (userId: number) => {
         try {
           const response = await getMySpace(userId);
-          const reservations = response.data.flatMap((space: any) =>
-            space.Bookings.flatMap((booking: any) =>
-              booking.User?.Payments.map((payment: any) => ({
+          const reservations = response.data.flatMap((space: SpaceType) =>
+            space.bookings?.flatMap((booking: Booking) =>
+              booking.user?.payments.map((payment: Payment) => ({
                 key: booking.id,
-                name: booking.User?.userName || '예약자 이름',
+                name: booking.user?.userName || '예약자 이름',
                 date: booking.startDate,
                 time: `${booking.startTime}:00 - ${booking.endTime}:00`,
-                phoneNumber: booking.User?.phoneNumber || '전화번호 없음',
+                phoneNumber: booking.user?.phoneNumber || '전화번호 없음',
                 bookingStatus: booking.bookingStatus,
                 paymentAmount: payment.paymentPrice,
                 spaceName: space.spaceName || '공간명 없음',
@@ -87,7 +86,11 @@ const ReservationInquiry = () => {
               }))
             )
           );
-          setData(reservations);
+          // console.log(reservations,'리절베이션')
+          const uniqueReservations = Array.from(
+            new Set(reservations.map((a:Reservation) => a.paymentId))
+          ).map((id) => reservations.find((a:Reservation) => a.paymentId === id));
+          setData(uniqueReservations);
         } catch (error) {
           console.error('예약 데이터를 불러오는 데 실패했습니다:', error);
         }
