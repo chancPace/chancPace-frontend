@@ -66,53 +66,75 @@ const ReservationInquiry = () => {
   const router = useRouter();
   const userId = useSelector((state: RootState) => state.user.id); // 리덕스에서 userId 가져옴
   const [data, setData] = useState<DataType[]>([]); // 예약 데이터를 저장할 상태
+  const [filteredData, setFilteredData] = useState<DataType[]>([]); // 검색 결과용 상태
+  const [searchText, setSearchText] = useState(''); // 검색어 상태
+
+  //내 공간의 예약가져오기
   useEffect(() => {
-    if (userId !== null) {
-      const fetchReservation = async (userId: number) => {
+    const fetchData = async () => {
+      if (userId) {
         try {
-          const response = await getMySpace(userId);
-          const reservations = response.data.flatMap((space: SpaceType) =>
-            space.bookings?.flatMap((booking: Booking) =>
-              booking.user?.payments.map((payment: Payment) => ({
-                key: booking.id,
-                name: booking.user?.userName || '예약자 이름',
-                date: booking.startDate,
-                time: `${booking.startTime}:00 - ${booking.endTime}:00`,
-                phoneNumber: booking.user?.phoneNumber || '전화번호 없음',
-                bookingStatus: booking.bookingStatus,
-                paymentAmount: payment.paymentPrice,
-                spaceName: space.spaceName || '공간명 없음',
-                paymentId: payment.id,
-              }))
-            )
-          );
-          // console.log(reservations,'리절베이션')
-          const uniqueReservations = Array.from(
-            new Set(reservations.map((a:Reservation) => a.paymentId))
-          ).map((id) => reservations.find((a:Reservation) => a.paymentId === id));
-          setData(uniqueReservations);
+          const response = await getMySpace(userId); // userId로 API 호출
+          const transformedData = response.data
+            .map((space: SpaceType) => {
+              return space.bookings?.map((booking) => {
+                const user = booking.user;
+                const payment = user?.payments.find(
+                  (p) => p.id === booking.paymentId
+                );
+                return {
+                  key: booking.id,
+                  paymentId: booking.paymentId,
+                  spaceName: space.spaceName,
+                  name: user?.userName,
+                  date: booking.startDate,
+                  time: `${booking.startTime} - ${booking.endTime}`,
+                  phoneNumber: user?.phoneNumber,
+                  paymentAmount: payment ? payment.paymentPrice : '정보 없음',
+                };
+              });
+            })
+            .flat();
+          setData(transformedData);
+          setFilteredData(transformedData);
         } catch (error) {
-          console.error('예약 데이터를 불러오는 데 실패했습니다:', error);
+          console.error('예약 데이터 불러오기 실패:', error);
         }
-      };
-      fetchReservation(userId);
-    }
+      }
+    };
+
+    fetchData();
   }, [userId]);
 
+  //검색어에 따라 데이터 필터링
+  const handleSearch = () => {
+    const filtered = data.filter((item) =>
+      Object.values(item).some((value) =>
+        String(value).toLowerCase().includes(searchText.toLowerCase())
+      )
+    );
+    setFilteredData(filtered);
+  };
+
+  //리스트 클릭 시 상세 페이지로 이동
   const handleRowClick = (record: DataType) => {
     router.push(`/reservation/details?id=${record.paymentId}`);
   };
 
   return (
     <ReservationInquiryStyled>
-      <Form className="search-section">
-        <Input />
-        <Button>검색</Button>
+      <Form className="search-section" onFinish={handleSearch}>
+        <Input
+          placeholder="검색어를 입력하세요"
+          onChange={(e) => setSearchText(e.target.value)}
+          value={searchText}
+        />
+        <Button htmlType="submit">검색</Button>
       </Form>
       <div className="inquiry-section">
         <Table<DataType>
           columns={columns}
-          dataSource={data}
+          dataSource={filteredData}
           onRow={(record) => ({
             onClick: () => handleRowClick(record),
           })}

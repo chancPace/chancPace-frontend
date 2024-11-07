@@ -95,6 +95,7 @@ export interface Booking {
   startTime: number;
   endTime: number;
   bookingStatus: string;
+  paymentId: number;
   user?: {
     userName: string;
     phoneNumber: string;

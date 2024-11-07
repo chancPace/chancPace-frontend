@@ -2,7 +2,6 @@ import { SalesStyled } from './styled';
 import { DatePicker, Table, TableColumnsType } from 'antd';
 const { RangePicker } = DatePicker;
 import DateRangePicker from '../DateRangePicker';
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/utill/redux/store';
@@ -24,27 +23,20 @@ interface DataType {
 
 const columns: TableColumnsType<DataType> = [
   {
-    title: '순서',
-    // dataIndex: 'key',
-  },
-  {
     title: '예약일',
     dataIndex: 'date',
   },
   {
     title: '공간명',
     dataIndex: 'spaceName',
-    // render: (text, record) => (
-    //   <Link href={`/reservation/details?id=${record.paymentId}`}>{text}</Link>
-    // ),
   },
   {
     title: '매출액',
-    dataIndex: 'paymentAmount',
+    dataIndex: 'totalAmount',
   },
   {
     title: '수수료',
-    dataIndex: 'fee',
+    dataIndex: 'feeAmount',
   },
   {
     title: '정산액',
@@ -55,56 +47,52 @@ const columns: TableColumnsType<DataType> = [
 const Sales = () => {
   const [data, setData] = useState<DataType[]>([]); // 예약 데이터를 저장할 상태
   const userId = useSelector((state: RootState) => state.user.id); // 리덕스에서 userId 가져옴
-  console.log(data, '데이터 길이'); // 데이터 길이를 확인
+  // console.log(data, '데이터 길이'); // 데이터 길이를 확인
 
-  console.log(data, '데이터터터터터');
   useEffect(() => {
-    if (userId !== null) {
-      const fetchPayment = async (userId: number) => {
+    const fetchData = async () => {
+      if (userId) {
         try {
           const response = await getMySpace(userId);
-          // const transformedData = data.map((item) => setData(item));
-          const sales = response.data.flatMap((space: any) =>
-            space.bookings.flatMap((booking: any) =>
-              booking.user?.payments.map((payment: any, index: number) => {
-                const paymentAmount = payment.paymentPrice;
-                const fee = Math.round(paymentAmount * 0.05); // 5% 수수료
-                const settlementAmount = paymentAmount - fee; // 정산액 = 결제금액 - 수수료
-                const formattPaymentAmount = paymentAmount.toLocaleString();
-                const formattFee = fee.toLocaleString();
-                const formattSettlementAmount =
-                  settlementAmount.toLocaleString();
+
+          const transformedData = response.data
+            .map((space: any) => {
+              return space.bookings?.map((booking: any) => {
+                const user = booking.user;
+                const payment = user?.payments.find(
+                  (p: any) => p.id === booking.paymentId
+                );
+                const paymentAmount = payment ? payment.paymentPrice : 0;
+                const couponAmount = payment ? payment.couponPrice : 0;
+                const totalAmount = paymentAmount + couponAmount;
+                const feeAmount = totalAmount * 0.05; // 수수료 (매출액의 5%)
+                const settlementAmount = totalAmount - feeAmount; // 정산 금액
 
                 return {
-                  key: index + 1,
                   date: booking.startDate,
-                  paymentAmount: formattPaymentAmount,
-                  spaceName: space.spaceName || '공간명 없음',
-                  fee: formattFee,
-                  settlementAmount: formattSettlementAmount,
+                  spaceName: space.spaceName,
+                  totalAmount: totalAmount || '정보 없음',
+                  feeAmount: feeAmount || '정보 없음',
+                  settlementAmount: settlementAmount || '정보 없음',
                 };
-              })
-            )
-          );
-          setData(sales);
+              });
+            })
+            .flat();
+
+          setData(transformedData);
         } catch (error) {
-          console.error('예약 데이터를 불러오는 데 실패했습니다:', error);
+          console.error('예약 데이터 불러오기 실패:', error);
         }
-      };
-      fetchPayment(userId);
-    }
+      }
+    };
+
+    fetchData();
   }, [userId]);
 
   return (
     <SalesStyled>
       <DateRangePicker />
-      <Table<DataType>
-        columns={columns}
-        dataSource={data}
-        // onRow={(record) => ({
-        //   onClick: () => handleRowClick(record),
-        // })}
-      />
+      <Table<DataType> columns={columns} dataSource={data} />
     </SalesStyled>
   );
 };

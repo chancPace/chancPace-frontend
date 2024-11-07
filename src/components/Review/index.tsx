@@ -12,6 +12,7 @@ const Review = () => {
   const userId = useSelector((state: RootState) => state.user.id);
   //리뷰데이터 저장
   const [reviews, setReviews] = useState<SpaceType[]>([]);
+  console.log(reviews, '리뷰즈');
 
   //리뷰 가져오기 (AVAILABLE 상태인것만)
   useEffect(() => {
@@ -19,6 +20,7 @@ const Review = () => {
       if (userId) {
         try {
           const response = await getMySpace(userId);
+          console.log(response,'리스펀스')
           const filteredData = response.data
             .map((space: SpaceType) => ({
               ...space,

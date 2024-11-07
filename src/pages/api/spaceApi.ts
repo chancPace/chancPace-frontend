@@ -69,3 +69,15 @@ export const updateSpace = async (spaceData: FormData, spaceId: string) => {
     throw error;
   }
 };
+
+export const getMySpaceBooking = async (userId: number) => {
+  try {
+    const response = await axios.get(`/api/get-my-space-booking`, {
+      params: { userId },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching space bookings:', error);
+    throw error;
+  }
+};

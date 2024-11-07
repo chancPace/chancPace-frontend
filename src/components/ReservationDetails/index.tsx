@@ -5,18 +5,18 @@ import type { DescriptionsProps, RadioChangeEvent } from 'antd';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 interface ReservationDetailsProps {
-  spaceName: string;
-  userName: string;
-  userEmail: string;
-  date: string;
-  time: string;
-  price: number;
-  paymentMethod: string;
-  payDate: string;
-  cardNumber: string;
-  suppliedPrice: number;
-  vat: number;
-  paymentKey: string;
+  spaceName?: string;
+  userName?: string;
+  userEmail?: string;
+  date?: string;
+  time?: string;
+  price?: number;
+  paymentMethod?: string;
+  payDate?: string;
+  cardNumber?: string;
+  suppliedPrice?: number;
+  vat?: number;
+  paymentKey?: string;
 }
 const reservationdetails = () => {
   const router = useRouter();
@@ -24,10 +24,8 @@ const reservationdetails = () => {
   const [details, setDetails] = useState<ReservationDetailsProps | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false); // 모달 표시 상태
   const [cancelReason, setCancelReason] = useState(''); // 취소 이유 상태
-  // console.log(details,'디테일스')
-  // console.log(id, '페이먼트아이디');
   useEffect(() => {
-    console.log('라우터 준비 상태:', router.isReady); // router.isReady 상태 확인
+
     console.log('paymentId:', id); // paymentId 값 확인
 
     const fetchDetails = async () => {
@@ -38,11 +36,11 @@ const reservationdetails = () => {
 
           console.log(response, '데이터터터ㅓ터터텉');
           setDetails({
-            spaceName: response.data.Booking.Space.spaceName,
-            userName: response.data.User.userName,
-            userEmail: response.data.User.email,
-            date: response.data.Booking.startDate,
-            time: `${response.data.Booking.startTime}:00 - ${response.data.Booking.endTime}:00`,
+            spaceName: response.data.booking.space.spaceName,
+            userName: response.data.user.userName,
+            userEmail: response.data.user.email,
+            date: response.data.booking.startDate,
+            time: `${response.data.booking.startTime}:00 - ${response.data.booking.endTime}:00`,
             paymentMethod: response.data.paymentMethod,
             cardNumber: response.data.cardNumber,
             price: response.data.paymentPrice,
@@ -83,29 +81,31 @@ const reservationdetails = () => {
         <Descriptions.Item label="예약자">
           {details?.userName}
         </Descriptions.Item>
-        <Descriptions.Item label="예약자이메일">
+        <Descriptions.Item label="예약자 이메일">
           {details?.userEmail}
         </Descriptions.Item>
-        <Descriptions.Item label="공간이름">
+        <Descriptions.Item label="공간 이름">
           {details?.spaceName}
         </Descriptions.Item>
-        <Descriptions.Item label="예약일">{details?.date}</Descriptions.Item>
-        <Descriptions.Item label="예약시간">{details?.time}</Descriptions.Item>
-        <Descriptions.Item label="결제방법">
+        <Descriptions.Item label="예약 일자">{details?.date}</Descriptions.Item>
+        <Descriptions.Item label="예약 시간">{details?.time}</Descriptions.Item>
+        <Descriptions.Item label="결제 방법">
           {details?.paymentMethod}
         </Descriptions.Item>
         <Descriptions.Item label="카드">
           {details?.cardNumber}
         </Descriptions.Item>
-        <Descriptions.Item label="결제일">{details?.payDate}</Descriptions.Item>
-        <Descriptions.Item label="공급가">
-          {details?.suppliedPrice.toLocaleString()}
+        <Descriptions.Item label="결제 일자">
+          {details?.payDate}
         </Descriptions.Item>
         <Descriptions.Item label="공급가">
-          {details?.vat.toLocaleString()}
+          {details?.suppliedPrice?.toLocaleString()}
         </Descriptions.Item>
-        <Descriptions.Item label="예약금액">
-          {details?.price.toLocaleString()}
+        <Descriptions.Item label="부가세">
+          {details?.vat?.toLocaleString()}
+        </Descriptions.Item>
+        <Descriptions.Item label="예약 금액">
+          {details?.price?.toLocaleString()}
         </Descriptions.Item>
       </Descriptions>
       <br />
