@@ -41,7 +41,7 @@ const AppWrapper = ({
         }
       } else {
         console.error('토큰이 없습니다');
-        // router.push('http://localhost:3000/login');
+        router.push('http://localhost:3000/login');
       }
     };
     fetchUserData();
