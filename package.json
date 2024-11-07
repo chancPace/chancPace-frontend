@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "dev": "cross-env NODE_ENV=development next dev -H 0.0.0.0 -p 3001",
+    "build": "cross-env NODE_ENV=production next build",
+    "start": "cross-env NODE_ENV=production next start -H 0.0.0.0 -p 3001",
     "lint": "next lint"
   },
   "dependencies": {
@@ -16,6 +16,7 @@
     "axios": "^1.7.7",
     "chart.js": "^4.4.2",
     "clsx": "^2.1.1",
+    "cross-env": "^7.0.3",
     "dayjs": "^1.11.13",
     "formik": "^2.4.6",
     "framer-motion": "^11.1.7",
