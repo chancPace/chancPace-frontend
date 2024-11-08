@@ -4,7 +4,7 @@ import { Space, Table } from 'antd';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/utill/redux/store';
 import { useRouter } from 'next/router';
-import { getMySpace,} from '@/pages/api/spaceApi';
+import { getMySpace } from '@/pages/api/spaceApi';
 import { SpaceType } from '@/types';
 const { Column } = Table;
 
@@ -42,7 +42,6 @@ const MySpace = () => {
   return (
     <MySpaceStyled>
       <Table<SpaceType> dataSource={space} rowKey="spaceId">
-        <Column title="공간 번호" dataIndex="id" key="id" />
         <Column title="공간 이름" dataIndex="spaceName" key="spaceName" />
         <Column
           title="등록일"

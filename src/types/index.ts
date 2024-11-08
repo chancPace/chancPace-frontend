@@ -99,14 +99,16 @@ export interface Booking {
   user?: {
     userName: string;
     phoneNumber: string;
-    payments: { id: number; paymentPrice: number }[];
+    payments: {
+      couponPrice: any; id: number; paymentPrice: number 
+}[];
   };
 }
 
 export interface Payment {
   id: number;
   paymentPrice: number;
-  couponPrice: number;
+  couponPrice?: number;
   booking?: {
     space?: {
       spaceName: string;

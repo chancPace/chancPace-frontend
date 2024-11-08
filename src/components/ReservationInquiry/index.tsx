@@ -1,6 +1,5 @@
 import { Button, Form, Input } from 'antd';
 import { ReservationInquiryStyled } from './styled';
-import { DatePicker } from 'antd';
 import { Table } from 'antd';
 import type { TableColumnsType } from 'antd';
 import Link from 'next/link';
@@ -9,7 +8,8 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/utill/redux/store';
 import { useRouter } from 'next/router';
-import { Booking, Payment, Reservation, SpaceType } from '@/types';
+import { useFormik } from 'formik';
+import { SpaceType } from '@/types';
 
 interface DataType {
   key: React.Key;
@@ -34,9 +34,6 @@ const columns: TableColumnsType<DataType> = [
     title: '예약자',
     dataIndex: 'name',
     width: '10%',
-    render: (text, record) => (
-      <Link href={`/reservation/details?id=${record.paymentId}`}>{text}</Link>
-    ),
   },
   {
     title: '방문일자',
@@ -49,12 +46,11 @@ const columns: TableColumnsType<DataType> = [
   {
     title: '전화번호',
     dataIndex: 'phoneNumber',
-    width: '20%',
   },
   {
     title: '금액',
     dataIndex: 'paymentAmount',
-    width: '20%',
+    render: (value) => value.toLocaleString(),
   },
 ];
 
@@ -64,7 +60,6 @@ const ReservationInquiry = () => {
   const [data, setData] = useState<DataType[]>([]); // 예약 데이터를 저장할 상태
   const [filteredData, setFilteredData] = useState<DataType[]>([]); // 검색 결과용 상태
   const [searchText, setSearchText] = useState(''); // 검색어 상태
-
 
   //내 공간의 예약가져오기
   useEffect(() => {
@@ -85,7 +80,7 @@ const ReservationInquiry = () => {
                   spaceName: space.spaceName,
                   name: user?.userName,
                   date: booking.startDate,
-                  time: `${booking.startTime} - ${booking.endTime}`,
+                  time: `${booking.startTime}:00 - ${booking.endTime}:00`,
                   phoneNumber: user?.phoneNumber,
                   paymentAmount: payment ? payment.paymentPrice : '정보 없음',
                 };
@@ -103,14 +98,24 @@ const ReservationInquiry = () => {
     fetchData();
   }, [userId]);
 
-  //검색어에 따라 데이터 필터링
-  const handleSearch = () => {
-    const filtered = data.filter((item) =>
-      Object.values(item).some((value) =>
-        String(value).toLowerCase().includes(searchText.toLowerCase())
-      )
-    );
-    setFilteredData(filtered);
+  const formik = useFormik({
+    initialValues: {
+      searchText: '',
+    },
+    onSubmit: (values) => {
+      const filtered = data.filter((item) =>
+        Object.values(item).some((value) =>
+          String(value).toLowerCase().includes(values.searchText.toLowerCase())
+        )
+      );
+      setFilteredData(filtered);
+    },
+  });
+
+  //검색 초기화
+  const handleReset = () => {
+    formik.resetForm(); // 검색어 입력 필드와 필터링 결과 초기화
+    setFilteredData(data);
   };
 
   //리스트 클릭 시 상세 페이지로 이동
@@ -120,14 +125,19 @@ const ReservationInquiry = () => {
 
   return (
     <ReservationInquiryStyled>
-      <Form className="search-section" onFinish={handleSearch}>
+      <form className="search-section" onSubmit={formik.handleSubmit}>
         <Input
-          placeholder="검색어를 입력하세요"
-          onChange={(e) => setSearchText(e.target.value)}
-          value={searchText}
+          name="searchText"
+          placeholder="검색어를 입력해주세요"
+          value={formik.values.searchText}
+          onChange={formik.handleChange}
+          // allowClear
         />
         <Button htmlType="submit">검색</Button>
-      </Form>
+        <Button onClick={handleReset} style={{ marginLeft: 8 }}>
+          전체 보기
+        </Button>
+      </form>
       <div className="inquiry-section">
         <Table<DataType>
           columns={columns}

@@ -9,8 +9,7 @@ const SalesDetail = () => {
   const router = useRouter();
   const { id } = router.query;
   const [details, setDetails] = useState<Payment | null>(null);
-  console.log(details, '디테일스스스');
-  console.log(id, '아이디');
+
   useEffect(() => {
     const fetchDetail = async () => {
       try {
@@ -22,7 +21,9 @@ const SalesDetail = () => {
     };
     fetchDetail();
   }, [id]);
-  const totalAmount = details ? details.paymentPrice + details.couponPrice : 0;
+  const totalAmount = details
+    ? details.paymentPrice + (details.couponPrice ?? 0)
+    : 0;
   const feeAmount = totalAmount * 0.05; // 수수료 (5%)
   const settlementAmount = totalAmount - feeAmount;
 
@@ -43,7 +44,7 @@ const SalesDetail = () => {
             {details.paymentPrice.toLocaleString()}
           </Descriptions.Item>
           <Descriptions.Item label="쿠폰 사용금액">
-            {details.couponPrice.toLocaleString()}
+            {details.couponPrice?.toLocaleString()}
           </Descriptions.Item>
           <Descriptions.Item label="매출액">
             {totalAmount.toLocaleString()}
