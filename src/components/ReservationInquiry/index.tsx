@@ -27,10 +27,6 @@ interface DataType {
 
 const columns: TableColumnsType<DataType> = [
   {
-    title: '순서',
-    dataIndex: 'paymentId',
-  },
-  {
     title: '공간명',
     dataIndex: 'spaceName',
   },
@@ -68,6 +64,7 @@ const ReservationInquiry = () => {
   const [data, setData] = useState<DataType[]>([]); // 예약 데이터를 저장할 상태
   const [filteredData, setFilteredData] = useState<DataType[]>([]); // 검색 결과용 상태
   const [searchText, setSearchText] = useState(''); // 검색어 상태
+
 
   //내 공간의 예약가져오기
   useEffect(() => {

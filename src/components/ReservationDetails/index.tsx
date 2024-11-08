@@ -26,7 +26,7 @@ const reservationdetails = () => {
   const [cancelReason, setCancelReason] = useState(''); // 취소 이유 상태
   useEffect(() => {
 
-    console.log('paymentId:', id); // paymentId 값 확인
+    // console.log('paymentId:', id); // paymentId 값 확인
 
     const fetchDetails = async () => {
       if (id) {

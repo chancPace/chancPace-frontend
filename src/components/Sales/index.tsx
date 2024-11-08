@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/utill/redux/store';
 import { getMySpace } from '@/pages/api/spaceApi';
+import { useRouter } from 'next/router';
 
 interface DataType {
   key: React.Key;
@@ -45,6 +46,7 @@ const columns: TableColumnsType<DataType> = [
 ];
 
 const Sales = () => {
+  const router = useRouter();
   const [data, setData] = useState<DataType[]>([]); // 예약 데이터를 저장할 상태
   const userId = useSelector((state: RootState) => state.user.id); // 리덕스에서 userId 가져옴
   // console.log(data, '데이터 길이'); // 데이터 길이를 확인
@@ -69,6 +71,7 @@ const Sales = () => {
                 const settlementAmount = totalAmount - feeAmount; // 정산 금액
 
                 return {
+                  paymentId: booking.paymentId,
                   date: booking.startDate,
                   spaceName: space.spaceName,
                   totalAmount: totalAmount || '정보 없음',
@@ -89,10 +92,20 @@ const Sales = () => {
     fetchData();
   }, [userId]);
 
+  const handleRowClick = (record: DataType) => {
+    router.push(`/sales/details?id=${record.paymentId}`);
+  };
+
   return (
     <SalesStyled>
       <DateRangePicker />
-      <Table<DataType> columns={columns} dataSource={data} />
+      <Table<DataType>
+        columns={columns}
+        dataSource={data}
+        onRow={(record) => ({
+          onClick: () => handleRowClick(record),
+        })}
+      />
     </SalesStyled>
   );
 };

@@ -106,6 +106,16 @@ export interface Booking {
 export interface Payment {
   id: number;
   paymentPrice: number;
+  couponPrice: number;
+  booking?: {
+    space?: {
+      spaceName: string;
+    };
+  };
+  user?: {
+    userName: string;
+    phoneNumber: string;
+  };
 }
 
 export interface Reservation {
