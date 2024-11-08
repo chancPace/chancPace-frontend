@@ -2,17 +2,7 @@ import { RegistrationStyled } from './styled';
 import React, { useEffect, useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import { Category } from '../../types';
-import {
-  Form,
-  Input,
-  Button,
-  Select,
-  InputNumber,
-  Switch,
-  Upload,
-  UploadFile,
-  message,
-} from 'antd';
+import { Form, Input, Button, Select, InputNumber, Switch, Upload, UploadFile, message } from 'antd';
 import { addNewSpace, getOneSpace, updateSpace } from '@/pages/api/spaceApi';
 const { TextArea } = Input;
 import { getCategories } from '@/pages/api/categoryApi';
@@ -77,7 +67,6 @@ const Registration = () => {
     }
 
     const formData = new FormData();
-
     // 일반 데이터 추가
     Object.keys(values).forEach((key) => {
       formData.append(key, values[key]);
@@ -109,6 +98,16 @@ const Registration = () => {
     }
   };
 
+  //파일 URL 디코딩 함수
+  const decodeUrl = (url: string) => {
+    try {
+      return decodeURIComponent(url);
+    } catch (error) {
+      console.error('디코딩 에러: ', error);
+      return url; // 디코딩 오류 발생 시 원본 URL 반환
+    }
+  };
+
   //수정 해당 공간의 데이터 불러오기
   useEffect(() => {
     // 수정할 공간의 데이터 불러오기
@@ -118,10 +117,20 @@ const Registration = () => {
           const id = Array.isArray(spaceId) ? spaceId[0] : spaceId; // spaceId가 배열일 경우 첫 번째 요소를 사용
           const response = await getOneSpace(id);
           const spaceData = response.data;
+          //FIXME -
+          // 기존 이미지가 있는 경우 fileList에 추가
+          const existingFiles =
+            spaceData.images?.map((image: { imageUrl: string }) => ({
+              url: decodeUrl(image.imageUrl) || '', // 이미지 URL이 없을 경우 빈 문자열로 처리
+              status: 'done', // 업로드된 이미지로 간주
+            })) || [];
+
           form.setFieldsValue({
             ...form.getFieldsValue(), // 기존 폼의 값들
             ...spaceData, // 서버에서 가져온 데이터로 덮어쓰기
           });
+
+          setFileList(existingFiles);
         } catch (error) {
           message.error('공간 정보를 불러오는 데 실패했습니다.');
         }
@@ -185,15 +194,8 @@ const Registration = () => {
         >
           <Input />
         </Form.Item>
-        <Form.Item
-          label="카테고리"
-          name="categoryId"
-          rules={[{ required: true, message: '카테고리를 선택해주세요' }]}
-        >
-          <Select
-            placeholder="카테고리를 선택해주세요"
-            options={categoryOptions}
-          />
+        <Form.Item label="카테고리" name="categoryId" rules={[{ required: true, message: '카테고리를 선택해주세요' }]}>
+          <Select placeholder="카테고리를 선택해주세요" options={categoryOptions} />
         </Form.Item>
         <Form.Item
           label="공간 소개"
@@ -260,8 +262,11 @@ const Registration = () => {
           ]}
         >
           <Select>
-            <Select.Option value="1">1</Select.Option>
-            <Select.Option value="2">2</Select.Option>
+            <Select.Option value="1">1시간</Select.Option>
+            <Select.Option value="2">2시간</Select.Option>
+            <Select.Option value="3">3시간</Select.Option>
+            <Select.Option value="4">4시간</Select.Option>
+            <Select.Option value="5">5시간</Select.Option>
           </Select>
         </Form.Item>
         <Form.Item label="공개여부" valuePropName="checked" name="isOpen">
@@ -293,9 +298,7 @@ const Registration = () => {
                 if (minGuests === undefined || value >= minGuests) {
                   return Promise.resolve();
                 }
-                return Promise.reject(
-                  new Error('최대 인원은 최소 인원보다 크거나 같아야 합니다.')
-                );
+                return Promise.reject(new Error('최대 인원은 최소 인원보다 크거나 같아야 합니다.'));
               },
             }),
           ]}
@@ -324,16 +327,10 @@ const Registration = () => {
             ({ getFieldValue }) => ({
               validator(_, value) {
                 const startValue = getFieldValue('businessStartTime');
-                if (
-                  value !== null &&
-                  startValue !== null &&
-                  value > startValue
-                ) {
+                if (value !== null && startValue !== null && value > startValue) {
                   return Promise.resolve();
                 }
-                return Promise.reject(
-                  new Error('종료 시간은 시작 시간보다 이후여야 합니다.')
-                );
+                return Promise.reject(new Error('종료 시간은 시작 시간보다 이후여야 합니다.'));
               },
             }),
           ]}
@@ -358,7 +355,7 @@ const Registration = () => {
           validateStatus={fileError ? 'error' : undefined} // 검증 상태 설정
         >
           <Upload
-            action="/uploads"
+            //FIXME - 기존 이미지 가져오게 수정하기
             listType="picture-card"
             fileList={fileList}
             onChange={handleFileChange}
@@ -374,9 +371,7 @@ const Registration = () => {
               showPreviewIcon: false,
               showRemoveIcon: true,
             }}
-            itemRender={(originNode) =>
-              React.cloneElement(originNode, { title: null })
-            }
+            itemRender={(originNode) => React.cloneElement(originNode, { title: null })}
           >
             {fileList.length >= 8 ? null : (
               <div>
