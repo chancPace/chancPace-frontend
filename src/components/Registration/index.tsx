@@ -7,6 +7,7 @@ import { addNewSpace, getOneSpace, updateSpace } from '@/pages/api/spaceApi';
 const { TextArea } = Input;
 import { getCategories } from '@/pages/api/categoryApi';
 import { useRouter } from 'next/router';
+import KakaoMapAddress from '../KakaoMapAddress';
 
 const Registration = () => {
   const router = useRouter();
@@ -18,6 +19,11 @@ const Registration = () => {
   const [fileError, setFileError] = useState<string | null>(null); // 파일 오류 메시지 상태 추가
 
   const isEditMode = !!spaceId;
+
+  // 카카오맵에서 전달받은 주소를 폼에 설정
+  const handleSelectAddress = (address: string) => {
+    form.setFieldsValue({ spaceLocation: address });
+  };
 
   //00부터 24까지의 시간 생성(영업시간)
   const timeOption = Array.from({ length: 25 }, (_, i) => ({
@@ -61,7 +67,7 @@ const Registration = () => {
 
   //데이터 전송
   const handleSubmit = async (values: any) => {
-    if (fileList.length === 0) {
+    if (!fileList) {
       setFileError('이미지는 최소 1장 이상 업로드해야 합니다.');
       return; // 파일이 없을 경우 제출 중단
     }
@@ -117,7 +123,6 @@ const Registration = () => {
           const id = Array.isArray(spaceId) ? spaceId[0] : spaceId; // spaceId가 배열일 경우 첫 번째 요소를 사용
           const response = await getOneSpace(id);
           const spaceData = response.data;
-          //FIXME -
           // 기존 이미지가 있는 경우 fileList에 추가
           const existingFiles =
             spaceData.images?.map((image: { imageUrl: string }) => ({
@@ -150,24 +155,25 @@ const Registration = () => {
         layout="horizontal"
         onFinish={handleSubmit}
         initialValues={{
-          spaceName: '공간 타이틀',
-          spaceLocation: '서울시 마포구',
-          description: '설명입니다',
-          spacePrice: 30000,
-          discount: 2000,
-          amenities: '편의시설입니다',
-          spaceStatus: 'AVAILABLE',
+          spaceName: '',
+          spaceLocation: '',
+          spaceLocationDetail: '',
+          description: '',
+          spacePrice: '',
+          discount: '',
+          amenities: '',
+          spaceStatus: 'UNAVAILABLE',
           isOpen: true,
-          guidelines: '주의사항입니다',
-          minGuests: 1,
-          maxGuests: 3,
-          cleanTime: 0,
+          guidelines: '',
+          minGuests: '',
+          maxGuests: '',
+          cleanTime: '',
           businessStartTime: '',
           businessEndTime: '',
           categoryId: '',
-          addPrice: 2000,
-          spaceAdminName: '호스트이름',
-          spaceAdminPhoneNumber: '010-0000-0000',
+          addPrice: '',
+          spaceAdminName: '',
+          spaceAdminPhoneNumber: '',
         }}
       >
         <Form.Item
@@ -176,26 +182,29 @@ const Registration = () => {
           rules={[
             {
               required: true,
-              message: '제목을 입력해주세요.',
+              message: '제목을 입력해 주세요.',
             },
           ]}
         >
           <Input />
         </Form.Item>
         <Form.Item
-          label="위치"
+          label="주소"
           name="spaceLocation"
           rules={[
             {
               required: true,
-              message: '위치를 입력해주세요.',
+              message: '위치를 입력해 주세요.',
             },
           ]}
         >
-          <Input />
+          <KakaoMapAddress onSelectAddress={(address) => form.setFieldsValue({ spaceLocation: address })} />
+        </Form.Item>
+        <Form.Item label="상세주소" name="spaceLocationDetail">
+          <Input placeholder="상세주소를 입력해 주세요" />
         </Form.Item>
         <Form.Item label="카테고리" name="categoryId" rules={[{ required: true, message: '카테고리를 선택해주세요' }]}>
-          <Select placeholder="카테고리를 선택해주세요" options={categoryOptions} />
+          <Select placeholder="카테고리를 선택해 주세요" options={categoryOptions} />
         </Form.Item>
         <Form.Item
           label="공간 소개"
@@ -203,29 +212,29 @@ const Registration = () => {
           rules={[
             {
               required: true,
-              message: '공간 소개를 입력해주세요',
+              message: '공간 소개를 입력해 주세요',
             },
           ]}
         >
           <TextArea rows={4} className="custom-textarea" />
         </Form.Item>
         <Form.Item
-          label="가격"
+          label="가격 (시간당)"
           name="spacePrice"
           rules={[
             {
               required: true,
-              message: '가격을 입력해주세요',
+              message: '가격을 입력해 주세요',
             },
           ]}
         >
-          <InputNumber />
+          <InputNumber placeholder="시간당 이용금액을 작성해 주세요" />
         </Form.Item>
         <Form.Item label="할인금액" name="discount">
-          <InputNumber />
+          <InputNumber placeholder="할인금액을 작성해 주세요" />
         </Form.Item>
         <Form.Item label="인당 추가요금" name="addPrice">
-          <InputNumber />
+          <InputNumber placeholder="인원 추가비용을 작성해 주세요" />
         </Form.Item>
         <Form.Item
           label="시설 안내"
@@ -233,11 +242,11 @@ const Registration = () => {
           rules={[
             {
               required: true,
-              message: '시설 안내를 입력해주세요',
+              message: '시설 안내를 입력해 주세요',
             },
           ]}
         >
-          <TextArea rows={2} name="amenities" className="custom-textarea" />
+          <TextArea rows={2} name="amenities" className="custom-textarea" placeholder="시설 안내를 작성해 주세요" />
         </Form.Item>
         <Form.Item
           label="예약시 주의사항"
@@ -245,11 +254,11 @@ const Registration = () => {
           rules={[
             {
               required: true,
-              message: '주의사항을 입력해주세요',
+              message: '주의사항을 입력해 주세요',
             },
           ]}
         >
-          <TextArea rows={2} name="caution" className="custom-textarea" />
+          <TextArea rows={2} name="caution" className="custom-textarea" placeholder="예약시 주의사항을 작성해 주세요" />
         </Form.Item>
         <Form.Item
           label="청소시간"
@@ -257,11 +266,12 @@ const Registration = () => {
           rules={[
             {
               required: true,
-              message: '청소 시간을 입력해주세요',
+              message: '청소 시간을 입력해 주세요',
             },
           ]}
         >
-          <Select>
+          <Select allowClear>
+            <Select.Option value="0">청소시간 없음</Select.Option>
             <Select.Option value="1">1시간</Select.Option>
             <Select.Option value="2">2시간</Select.Option>
             <Select.Option value="3">3시간</Select.Option>
@@ -278,11 +288,11 @@ const Registration = () => {
           rules={[
             {
               required: true,
-              message: '인원수를 입력해주세요',
+              message: '인원수를 입력해 주세요',
             },
           ]}
         >
-          <InputNumber />
+          <InputNumber placeholder="최소인원을 선택해 주세요" />
         </Form.Item>
         <Form.Item
           label="최대 인원"
@@ -290,7 +300,7 @@ const Registration = () => {
           rules={[
             {
               required: true,
-              message: '최대 인원을 입력해주세요.',
+              message: '최대 인원을 입력해 주세요.',
             },
             ({ getFieldValue }) => ({
               validator(_, value) {
@@ -303,14 +313,15 @@ const Registration = () => {
             }),
           ]}
         >
-          <InputNumber />
+          <InputNumber placeholder="최대 인원을 선택해 주세요" />
         </Form.Item>
         <Form.Item
           label="영업 시작 시간"
           name="businessStartTime"
-          rules={[{ required: true, message: '영업 시작 시간을 선택해주세요' }]}
+          rules={[{ required: true, message: '영업 시작 시간을 선택해 주세요' }]}
         >
           <Select
+            allowClear
             options={timeOption}
             placeholder="시작 시간을 선택하세요"
             onChange={(value) => {
@@ -322,40 +333,23 @@ const Registration = () => {
         <Form.Item
           label="영업 종료 시간"
           name="businessEndTime"
-          rules={[
-            { required: true, message: '영업 종료 시간을 선택해주세요' },
-            ({ getFieldValue }) => ({
-              validator(_, value) {
-                const startValue = getFieldValue('businessStartTime');
-                if (value !== null && startValue !== null && value > startValue) {
-                  return Promise.resolve();
-                }
-                return Promise.reject(new Error('종료 시간은 시작 시간보다 이후여야 합니다.'));
-              },
-            }),
-          ]}
+          rules={[{ required: true, message: '영업 종료 시간을 선택해 주세요' }]}
         >
           <Select
+            allowClear
             options={timeOption.filter((opt) => opt.value > (startHour ?? -1))}
             placeholder="종료 시간을 선택하세요"
             disabled={startHour === null} // 시작 시간이 선택되지 않았을 때 비활성화
           />
         </Form.Item>
-
-        <Form.Item label="공간 상태" name="spaceStatus">
-          <Select>
-            <Select.Option value="AVAILABLE">사용 가능</Select.Option>
-            <Select.Option value="UNAVAILABLE">사용 불가</Select.Option>
-          </Select>
-        </Form.Item>
+        {/* adadsadasd */}
         <Form.Item
-          label="Upload"
+          label="공간 이미지"
           valuePropName="fileList"
           help={fileError} // 오류 메시지 출력
           validateStatus={fileError ? 'error' : undefined} // 검증 상태 설정
         >
           <Upload
-            //FIXME - 기존 이미지 가져오게 수정하기
             listType="picture-card"
             fileList={fileList}
             onChange={handleFileChange}
@@ -376,34 +370,24 @@ const Registration = () => {
             {fileList.length >= 8 ? null : (
               <div>
                 <PlusOutlined />
-                <div style={{ marginTop: 8 }}>Upload</div>
+                <div style={{ marginTop: 8 }}>Image</div>
               </div>
             )}
           </Upload>
         </Form.Item>
         <Form.Item
-          label="호스트이름"
+          label="관리자 이름"
           name="spaceAdminName"
-          rules={[
-            {
-              required: true,
-              message: '호스트 이름을 입력해주세요',
-            },
-          ]}
+          rules={[{ required: true, message: '관리자 이름을 입력해주세요' }]}
         >
-          <Input />
+          <Input placeholder="공간 관리자를 작성해 주세요" />
         </Form.Item>
         <Form.Item
-          label="호스트 전화번호"
+          label="관리자 전화번호"
           name="spaceAdminPhoneNumber"
-          rules={[
-            {
-              required: true,
-              message: '전화번호를 입력해주세요(-포함)',
-            },
-          ]}
+          rules={[{ required: true, message: '전화번호를 입력해주세요(-포함)' }]}
         >
-          <Input />
+          <Input placeholder="공간 관리자 연락처를 작성해 주세요" />
         </Form.Item>
         <Form.Item className="btn-box">
           <Button type="primary" htmlType="submit">

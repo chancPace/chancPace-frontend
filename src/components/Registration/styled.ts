@@ -23,8 +23,14 @@ export const RegistrationStyled = styled.div`
         padding: 15px 50px;
       }
     }
+    .ant-input {
+      width: 100%;
+    }
   }
   .custom-textarea {
     resize: none;
+  }
+  .ant-input-number{
+    width: 100%;
   }
 `;

@@ -11,7 +11,6 @@ const { Column } = Table;
 const MySpace = () => {
   const router = useRouter();
   const [space, setSpace] = useState([]);
-  console.log(space, '스페이스스');
   const userId = useSelector((state: RootState) => state.user.id); // 리덕스에서 userId 가져옴
 
   const handleEdit = (spaceId: number) => {

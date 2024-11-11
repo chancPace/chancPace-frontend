@@ -20,7 +20,7 @@ export const addNewSpace = async (spaceData: FormData) => {
     });
     return response.data || []; // undefined일 경우 빈 배열 반환
   } catch (error: any) {
-    console.error('공간 등록 실패', error.response?.data || error.message);
+    console.error('공간 등록 실패!!!!', error.response?.data || error.message);
     throw error;
   }
 };
@@ -62,7 +62,6 @@ export const updateSpace = async (spaceData: FormData, spaceId: string) => {
         },
       }
     );
-    console.log(response, '리스펀스 api');
     return response.data;
   } catch (error) {
     console.error('공간 수정 실패', error);

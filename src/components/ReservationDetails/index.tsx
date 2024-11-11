@@ -26,15 +26,11 @@ const reservationdetails = () => {
   const [cancelReason, setCancelReason] = useState(''); // 취소 이유 상태
   useEffect(() => {
 
-    // console.log('paymentId:', id); // paymentId 값 확인
-
     const fetchDetails = async () => {
       if (id) {
         try {
           const response = await getOnePayment(Number(id));
           const payDate = response.data.createdAt.split('T')[0];
-
-          console.log(response, '데이터터터ㅓ터터텉');
           setDetails({
             spaceName: response.data.booking.space.spaceName,
             userName: response.data.user.userName,

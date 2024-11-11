@@ -9,7 +9,6 @@ const DateRangePicker = () => {
 
   const onChange = (dates: [Dayjs | null, Dayjs | null] | null) => {
     setDates(dates);
-    console.log('Selected Dates:', dates); // 선택한 날짜를 콘솔에 출력
   };
 
   return (
