@@ -67,7 +67,8 @@ const Registration = () => {
 
   //데이터 전송
   const handleSubmit = async (values: any) => {
-    if (!fileList) {
+    console.log('🚀 ~ handleSubmit ~ values:', values);
+    if (fileList.length === 0) {
       setFileError('이미지는 최소 1장 이상 업로드해야 합니다.');
       return; // 파일이 없을 경우 제출 중단
     }
@@ -133,6 +134,7 @@ const Registration = () => {
           form.setFieldsValue({
             ...form.getFieldsValue(), // 기존 폼의 값들
             ...spaceData, // 서버에서 가져온 데이터로 덮어쓰기
+            spaceStatus: spaceData.spaceStatus || 'UNAVAILABLE',
           });
 
           setFileList(existingFiles);
@@ -247,6 +249,9 @@ const Registration = () => {
           ]}
         >
           <TextArea rows={2} name="amenities" className="custom-textarea" placeholder="시설 안내를 작성해 주세요" />
+        </Form.Item>
+        <Form.Item name="spaceStatus" hidden initialValue="UNAVAILABLE">
+          <Input />
         </Form.Item>
         <Form.Item
           label="예약시 주의사항"
