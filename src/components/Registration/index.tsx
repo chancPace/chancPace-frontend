@@ -58,6 +58,11 @@ const Registration = () => {
     }));
 
   const handleFileChange = ({ fileList }: { fileList: UploadFile[] }) => {
+    fileList.forEach((file) => {
+      if (!file.originFileObj) {
+        message.error('이미지 파일을 다시 확인해주세요.');
+      }
+    });
     setFileList(fileList);
     // 파일이 추가되면 오류 메시지를 초기화
     if (fileList.length > 0) {
@@ -67,7 +72,6 @@ const Registration = () => {
 
   //데이터 전송
   const handleSubmit = async (values: any) => {
-    console.log('🚀 ~ handleSubmit ~ values:', values);
     if (fileList.length === 0) {
       setFileError('이미지는 최소 1장 이상 업로드해야 합니다.');
       return; // 파일이 없을 경우 제출 중단
@@ -135,8 +139,10 @@ const Registration = () => {
             ...form.getFieldsValue(), // 기존 폼의 값들
             ...spaceData, // 서버에서 가져온 데이터로 덮어쓰기
             spaceStatus: spaceData.spaceStatus || 'UNAVAILABLE',
+            spaceLocation: spaceData.spaceLocation || '',
           });
 
+          handleSelectAddress(spaceData.spaceLocation);
           setFileList(existingFiles);
         } catch (error) {
           message.error('공간 정보를 불러오는 데 실패했습니다.');
@@ -347,7 +353,6 @@ const Registration = () => {
             disabled={startHour === null} // 시작 시간이 선택되지 않았을 때 비활성화
           />
         </Form.Item>
-        {/* adadsadasd */}
         <Form.Item
           label="공간 이미지"
           valuePropName="fileList"
