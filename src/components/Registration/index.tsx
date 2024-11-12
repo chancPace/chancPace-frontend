@@ -8,6 +8,7 @@ const { TextArea } = Input;
 import { getCategories } from '@/pages/api/categoryApi';
 import { useRouter } from 'next/router';
 import KakaoMapAddress from '../KakaoMapAddress';
+import { getAllUser } from '@/pages/api/userApi';
 
 const Registration = () => {
   const router = useRouter();
@@ -17,6 +18,8 @@ const Registration = () => {
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [startHour, setStartHour] = useState<number | null>(null);
   const [fileError, setFileError] = useState<string | null>(null); // 파일 오류 메시지 상태 추가
+  const [user, setUser] = useState<any>();
+  const [userOption, setUserOption] = useState();
 
   const isEditMode = !!spaceId;
 
@@ -41,7 +44,21 @@ const Registration = () => {
         message.error('카테고리 목록을 불러오는 데 실패했습니다.');
       }
     };
+    const fetchUser = async () => {
+      try {
+        const response = await getAllUser();
+        setUser(response.data.data);
+        const users = response?.data?.data?.map((x: any, i: number) => ({
+          label: x.userName,
+          value: x.userName,
+        }));
+        setUserOption(users);
+      } catch (error) {
+        message.error('회원 목록을 불러오는 데 실패했습니다.');
+      }
+    };
     fetchCategories();
+    fetchUser();
   }, []);
 
   //select -> option 카테고리 대분류,소분류 분류하여 나타내기
@@ -145,6 +162,16 @@ const Registration = () => {
     };
     fetchSpaceData();
   }, [spaceId, form]);
+
+  const handleUser = (value: any) => {
+    const targetUser = user?.find((x: any) => x.userName === value);
+    const phoneNumber = targetUser?.phoneNumber;
+    if (phoneNumber) {
+      form.setFieldsValue({ spaceAdminPhoneNumber: phoneNumber });
+    } else {
+      form.setFieldsValue({ spaceAdminPhoneNumber: '' });
+    }
+  };
 
   return (
     <RegistrationStyled>
@@ -385,7 +412,13 @@ const Registration = () => {
           name="spaceAdminName"
           rules={[{ required: true, message: '관리자 이름을 입력해주세요' }]}
         >
-          <Input placeholder="공간 관리자를 작성해 주세요" />
+          {/* <Input placeholder="공간 관리자를 작성해 주세요" /> */}
+          <Select
+            placeholder="관리자 이름을 입력하세요"
+            allowClear
+            options={userOption}
+            onChange={(value) => handleUser(value)}
+          />
         </Form.Item>
         <Form.Item
           label="관리자 전화번호"

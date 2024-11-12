@@ -11,12 +11,12 @@ const { Column } = Table;
 const MySpace = () => {
   const router = useRouter();
   const [space, setSpace] = useState([]);
-  const userId = useSelector((state: RootState) => state.user.id); // 리덕스에서 userId 가져옴
+  const userId = useSelector((state: RootState) => state.user.id);
 
   const handleEdit = (spaceId: number) => {
     router.push({
-      pathname: '/registration', // 경로 설정
-      query: { spaceId }, // spaceId를 쿼리로 전달
+      pathname: '/registration',
+      query: { spaceId },
     });
   };
   useEffect(() => {
@@ -24,11 +24,9 @@ const MySpace = () => {
       if (userId !== null) {
         try {
           const response = await getMySpace(userId);
-          const openSpace = response?.data?.filter(
-            (x: SpaceType, i: number) => {
-              return x.isOpen === true;
-            }
-          );
+          const openSpace = response?.data?.filter((x: SpaceType, i: number) => {
+            return x.isOpen === true;
+          });
           setSpace(openSpace);
         } catch (error) {
           console.error('공간을 불러오지 못했습니다.', error);
@@ -46,9 +44,7 @@ const MySpace = () => {
           title="등록일"
           dataIndex="createdAt"
           key="createdAt"
-          render={(createdAt: string) =>
-            new Date(createdAt).toLocaleDateString()
-          }
+          render={(createdAt: string) => new Date(createdAt).toLocaleDateString()}
         />
         <Column title="주소" dataIndex="spaceLocation" key="spaceLocation" />
         <Column
@@ -75,9 +71,7 @@ const MySpace = () => {
           title="상태"
           dataIndex="spaceStatus"
           key="spaceStatus"
-          render={(spaceStatus: string) =>
-            spaceStatus === 'AVAILABLE' ? '승인 완료' : '승인 미완료'
-          }
+          render={(spaceStatus: string) => (spaceStatus === 'AVAILABLE' ? '승인 완료' : '승인 미완료')}
         />
         <Column
           title="Action"
