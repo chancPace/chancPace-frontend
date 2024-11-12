@@ -52,31 +52,15 @@ export const getOneSpace = async (spaceId: string) => {
 export const updateSpace = async (spaceData: FormData, spaceId: string) => {
   try {
     const token = Cookies.get('token');
-    const response = await axios.patch(
-      `${API_URL}/update-space?spaceId=${spaceId}`,
-      spaceData,
-      {
-        headers: {
-          // 'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    return response.data;
-  } catch (error) {
-    console.error('공간 수정 실패', error);
-    throw error;
-  }
-};
-
-export const getMySpaceBooking = async (userId: number) => {
-  try {
-    const response = await axios.get(`/api/get-my-space-booking`, {
-      params: { userId },
+    const response = await axios.patch(`${API_URL}/update-space?spaceId=${spaceId}`, spaceData, {
+      headers: {
+        // 'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${token}`,
+      },
     });
     return response.data;
   } catch (error) {
-    console.error('Error fetching space bookings:', error);
+    console.error('공간 수정 실패', error);
     throw error;
   }
 };
