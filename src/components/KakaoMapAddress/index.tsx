@@ -7,7 +7,7 @@ const KAKAO_API_KEY = process.env.NEXT_PUBLIC_KAKAO_MAP_API_KEY;
 
 declare global {
   interface Window {
-    // kakao: any;
+    kakao: any;
     daum: any;
   }
 }
@@ -17,13 +17,15 @@ interface IAddr {
 }
 
 interface KakaoMapAddressProps {
+  addValue: string;
+  setAddValue: React.Dispatch<React.SetStateAction<string>>;
   onSelectAddress: (address: string) => void; // 주소 선택 시 호출할 콜백 함수
 }
 
-const KakaoMapAddress = ({ onSelectAddress }: KakaoMapAddressProps) => {
+const KakaoMapAddress = ({ addValue, setAddValue, onSelectAddress }: KakaoMapAddressProps) => {
   const [map, setMap] = useState<any>();
   const [marker, setMarker] = useState<any>();
-  const [addValue, setAddValue] = useState<any>();
+  const [address, setAddress] = useState<string>('');
 
   const [form] = Form.useForm();
 
@@ -88,19 +90,17 @@ const KakaoMapAddress = ({ onSelectAddress }: KakaoMapAddressProps) => {
           if (status === window.kakao.maps.services.Status.OK) {
             const currentPos = new window.kakao.maps.LatLng(result[0].y, result[0].x);
 
-            setAddValue(address);
-
-            // 폼 필드 설정 및 유효성 검사
             await form.validateFields(['spaceLocation']);
             form.setFieldsValue({ spaceLocation: address });
 
             map.panTo(currentPos);
-
             marker.setMap(null);
             marker.setPosition(currentPos);
             marker.setMap(map);
 
-            onSelectAddress(address);
+            setAddress(address); // Input에 보여줄 주소 업데이트
+            setAddValue(address); // 부모의 상태에 주소 업데이트
+            onSelectAddress(address); // 부모로 전달
           } else {
             console.error('Geocoding failed:', status);
           }
@@ -112,9 +112,7 @@ const KakaoMapAddress = ({ onSelectAddress }: KakaoMapAddressProps) => {
   return (
     <KakaoMapAddressStyled>
       <div>
-        <div onClick={onClickAddr}>
-          <Input id="addr" value={addValue} readOnly />
-        </div>
+        <Input id="addr" value={addValue} readOnly onClick={onClickAddr} />
         <div id="map" style={{ width: '100%', height: '400px' }}></div>
       </div>
     </KakaoMapAddressStyled>

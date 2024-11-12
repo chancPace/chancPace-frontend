@@ -6,7 +6,6 @@ import { TemplateStyled } from "./styled";
 
 import clsx from "clsx";
 import Sidebar from "../Sidebar";
-import Header from "@/layouts/Header";
 
 export interface TemplateProps {
   className?: string;
@@ -16,7 +15,6 @@ export interface TemplateProps {
 const Template = ({ className, children }: TemplateProps) => {
   return (
     <TemplateStyled className={clsx("Template", className)}>
-      <Header />
       <Sidebar />
       <Content>{children}</Content>
     </TemplateStyled>

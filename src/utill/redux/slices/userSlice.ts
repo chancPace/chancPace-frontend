@@ -1,40 +1,47 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-interface UserState {
+interface UserInfo {
   email: string | null;
   name: string | null;
   role: string | null;
+  token: string;
+}
+
+interface UserState {
   isLoggedIn: boolean;
-  id: number | null;
+  userInfo: UserInfo | null;
 }
 const initialState: UserState = {
-  email: null,
-  name: null,
-  role: null,
   isLoggedIn: false,
-  id: null,
+  userInfo: {
+    email: null,
+    name: null,
+    role: null,
+    token: '',
+  },
 };
 
 const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    setUser: (state, action: PayloadAction<UserState>) => {
-      state.email = action.payload.email;
-      state.name = action.payload.name;
-      state.role = action.payload.role;
-      state.isLoggedIn = action.payload.isLoggedIn; 
-      state.id = action.payload.id
+    setUser: (state, action: PayloadAction<UserInfo>) => {
+      state.isLoggedIn = true; // 로그인 상태 업데이트
+      state.userInfo = action.payload; // 사용자 정보 업데이트
     },
     clearUser: (state) => {
-      state.email = null;
-      state.name = null;
-      state.role = null;
+      state.userInfo = null; // 사용자 정보 초기화
+      state.isLoggedIn = false; // 로그인 상태 초기화
+    },
+    loginSuccess: (state, action: PayloadAction<UserInfo>) => {
+      state.isLoggedIn = true;
+      state.userInfo = action.payload;
+    },
+    logout: (state) => {
       state.isLoggedIn = false;
-      state.id =  null
+      state.userInfo = null;
     },
   },
 });
 
-export const { setUser, clearUser } = userSlice.actions;
+export const { setUser, clearUser, loginSuccess, logout} = userSlice.actions;
 export default userSlice.reducer;

@@ -6,6 +6,11 @@ export interface Category {
   pId: number | null;
 }
 
+export interface LoginData {
+  email: string;
+  password: string;
+}
+
 export interface SpaceType {
   id: number;
   spaceName: string;

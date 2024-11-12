@@ -20,12 +20,15 @@ const Registration = () => {
   const [fileError, setFileError] = useState<string | null>(null); // 파일 오류 메시지 상태 추가
   const [user, setUser] = useState<any>();
   const [userOption, setUserOption] = useState();
+  const [addValue, setAddValue] = useState<string>('');
+  console.log('🚀 ~ Registration ~ addValue:', addValue);
 
   const isEditMode = !!spaceId;
 
   // 카카오맵에서 전달받은 주소를 폼에 설정
   const handleSelectAddress = (address: string) => {
     form.setFieldsValue({ spaceLocation: address });
+    setAddValue(address);
   };
 
   //00부터 24까지의 시간 생성(영업시간)
@@ -156,9 +159,10 @@ const Registration = () => {
             ...form.getFieldsValue(), // 기존 폼의 값들
             ...spaceData, // 서버에서 가져온 데이터로 덮어쓰기
             spaceStatus: spaceData.spaceStatus || 'UNAVAILABLE',
-            spaceLocation: spaceData.spaceLocation || '',
+            spaceLocation: addValue || '',
           });
 
+          setAddValue(spaceData.spaceLocation);
           handleSelectAddress(spaceData.spaceLocation);
           setFileList(existingFiles);
         } catch (error) {
@@ -233,7 +237,11 @@ const Registration = () => {
             },
           ]}
         >
-          <KakaoMapAddress onSelectAddress={(address) => form.setFieldsValue({ spaceLocation: address })} />
+          <KakaoMapAddress
+          addValue={addValue}
+            setAddValue={setAddValue}
+            onSelectAddress={(address) => form.setFieldsValue({ spaceLocation: address })}
+          />
         </Form.Item>
         <Form.Item label="상세주소" name="spaceLocationDetail">
           <Input placeholder="상세주소를 입력해 주세요" />

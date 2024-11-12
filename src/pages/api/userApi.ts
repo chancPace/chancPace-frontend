@@ -1,3 +1,4 @@
+import { LoginData } from '@/types';
 import axios, { AxiosError } from 'axios';
 
 const isLocal = process.env.NODE_ENV === 'development';
@@ -7,6 +8,7 @@ const API_URL = `${
     ? `http://${process.env.NEXT_PUBLIC_LOCAL_HOST}:${process.env.NEXT_PUBLIC_LOCAL_PORT}`
     : `http://${process.env.NEXT_PUBLIC_SERVER_HOST}:${process.env.NEXT_PUBLIC_SERVER_PORT}`
 }/api/user`;
+console.log("🚀 ~ API_URL:", API_URL)
 
 export const getUser = async (token: string) => {
   try {
@@ -50,6 +52,17 @@ export const getAllUser = async () => {
       // 요청을 보내는 중 오류 발생
       console.log('요청 오류:', axiosError.message);
     }
+    throw axiosError;
+  }
+};
+
+export const postLogin = async (userData: LoginData) => {
+  try {
+    const response = await axios.post(`${API_URL}/login`, userData);
+    return response.data;
+  } catch (error) {
+    const axiosError = error as AxiosError;
+    console.log('로그인 요청 중 오류', axiosError.message);
     throw axiosError;
   }
 };
