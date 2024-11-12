@@ -56,7 +56,7 @@ const columns: TableColumnsType<DataType> = [
 
 const ReservationInquiry = () => {
   const router = useRouter();
-  const userId = useSelector((state: RootState) => state.user.id); // 리덕스에서 userId 가져옴
+  const userId = useSelector((state: RootState) => state.user.userInfo?.id); // 리덕스에서 userId 가져옴
   const [data, setData] = useState<DataType[]>([]); // 예약 데이터를 저장할 상태
   const [filteredData, setFilteredData] = useState<DataType[]>([]); // 검색 결과용 상태
   const [searchText, setSearchText] = useState(''); // 검색어 상태

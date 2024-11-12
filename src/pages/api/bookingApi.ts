@@ -10,12 +10,10 @@ const API_URL = `${
 }/api/booking/`;
 
 export const getMySpaceBooking = async (userId: number) => {
-  console.log('🚀 ~ getMySpaceBooking ~ userId:', userId);
   try {
     const response = await axios.get(`${API_URL}get-my-booking`, {
       params: { userId },
     });
-    console.log('🚀 ~ getMySpaceBooking ~ response:', response);
     return response.data;
   } catch (error) {
     console.error('Error fetching space bookings:', error);

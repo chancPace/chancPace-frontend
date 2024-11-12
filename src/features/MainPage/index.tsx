@@ -1,20 +1,16 @@
-// import Charts from '@/components/charts';
-
 import { useEffect, useState } from 'react';
 
-import dayjs from 'dayjs';
-
-import { CarryOutOutlined, CreditCardOutlined, HomeOutlined, UserOutlined } from '@ant-design/icons';
-import { Router, useRouter } from 'next/router';
+import { CreditCardOutlined, HomeOutlined, UserOutlined } from '@ant-design/icons';
+import { useRouter } from 'next/router';
 import { MainStyled } from './style';
 import { getMySpaceBooking } from '@/pages/api/bookingApi';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/utill/redux/store';
 
 const MainPage = () => {
-  const userId = useSelector((state: RootState) => state.user.id);
+  //FIXME -  이거 뭐임???
+  const userId = useSelector((state: RootState) => state.user.userInfo?.id);
   console.log('🚀 ~ MainPage ~ userId:', userId);
-
   const [todayBooking, setTodayBooking] = useState();
   const [todayPayment, setTodayPayment] = useState();
   const router = useRouter();
@@ -22,7 +18,6 @@ const MainPage = () => {
   const fetchData = async () => {
     if (userId) {
       const result = await getMySpaceBooking(userId);
-      console.log('🚀 ~ fetchData ~ result:', result);
     }
     // const user = await getAllUser();
     // const space = await getAllSpace();

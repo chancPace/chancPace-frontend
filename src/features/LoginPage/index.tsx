@@ -27,6 +27,7 @@ const LoginPage = () => {
         message.success('로그인 성공');
         dispatch(
           loginSuccess({
+            id: response.data.id,
             email: response.data.email,
             name: response.data.name,
             role: response.data.role,

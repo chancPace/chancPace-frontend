@@ -21,8 +21,6 @@ const Registration = () => {
   const [user, setUser] = useState<any>();
   const [userOption, setUserOption] = useState();
   const [addValue, setAddValue] = useState<string>('');
-  console.log('🚀 ~ Registration ~ addValue:', addValue);
-
   const isEditMode = !!spaceId;
 
   // 카카오맵에서 전달받은 주소를 폼에 설정
@@ -148,6 +146,7 @@ const Registration = () => {
           const id = Array.isArray(spaceId) ? spaceId[0] : spaceId; // spaceId가 배열일 경우 첫 번째 요소를 사용
           const response = await getOneSpace(id);
           const spaceData = response.data;
+          console.log("🚀 ~ fetchSpaceData ~ spaceData:", spaceData)
           // 기존 이미지가 있는 경우 fileList에 추가
           const existingFiles =
             spaceData.images?.map((image: { imageUrl: string }) => ({
@@ -197,9 +196,9 @@ const Registration = () => {
           spaceName: '',
           spaceLocation: '',
           spaceLocationDetail: '',
-          description: '',
+          description: 'null',
           spacePrice: '',
-          discount: '',
+          discount: 0,
           amenities: '',
           spaceStatus: 'UNAVAILABLE',
           isOpen: true,

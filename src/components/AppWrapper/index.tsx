@@ -22,6 +22,7 @@ const AppWrapper = ({ Component, pageProps }: { Component: any; pageProps: any }
         if (userData.result) {
           dispatch(
             setUser({
+              id: userData.data.id,
               email: userData.data.email,
               name: userData.data.name,
               role: userData.data.role,

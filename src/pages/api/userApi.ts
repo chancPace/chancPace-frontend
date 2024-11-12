@@ -8,8 +8,6 @@ const API_URL = `${
     ? `http://${process.env.NEXT_PUBLIC_LOCAL_HOST}:${process.env.NEXT_PUBLIC_LOCAL_PORT}`
     : `http://${process.env.NEXT_PUBLIC_SERVER_HOST}:${process.env.NEXT_PUBLIC_SERVER_PORT}`
 }/api/user`;
-console.log("🚀 ~ API_URL:", API_URL)
-
 export const getUser = async (token: string) => {
   try {
     const response = await axios.get(`${API_URL}/get-user`, {

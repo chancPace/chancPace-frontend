@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 interface UserInfo {
+  id: number | null; // ????????????? //FIXME - 
   email: string | null;
   name: string | null;
   role: string | null;
@@ -13,6 +14,7 @@ interface UserState {
 const initialState: UserState = {
   isLoggedIn: false,
   userInfo: {
+    id: null,
     email: null,
     name: null,
     role: null,
@@ -43,5 +45,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { setUser, clearUser, loginSuccess, logout} = userSlice.actions;
+export const { setUser, clearUser, loginSuccess, logout } = userSlice.actions;
 export default userSlice.reducer;
