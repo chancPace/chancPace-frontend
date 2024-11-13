@@ -146,7 +146,6 @@ const Registration = () => {
           const id = Array.isArray(spaceId) ? spaceId[0] : spaceId; // spaceId가 배열일 경우 첫 번째 요소를 사용
           const response = await getOneSpace(id);
           const spaceData = response.data;
-          console.log("🚀 ~ fetchSpaceData ~ spaceData:", spaceData)
           // 기존 이미지가 있는 경우 fileList에 추가
           const existingFiles =
             spaceData.images?.map((image: { imageUrl: string }) => ({
@@ -198,7 +197,7 @@ const Registration = () => {
           spaceLocationDetail: '',
           description: '',
           spacePrice: '',
-          discount: null,
+          discount: '',
           amenities: '',
           spaceStatus: 'UNAVAILABLE',
           isOpen: true,
@@ -237,7 +236,7 @@ const Registration = () => {
           ]}
         >
           <KakaoMapAddress
-          addValue={addValue}
+            addValue={addValue}
             setAddValue={setAddValue}
             onSelectAddress={(address) => form.setFieldsValue({ spaceLocation: address })}
           />
@@ -272,7 +271,16 @@ const Registration = () => {
         >
           <InputNumber placeholder="시간당 이용금액을 작성해 주세요" />
         </Form.Item>
-        <Form.Item label="할인금액" name="discount">
+        <Form.Item
+          label="할인금액"
+          name="discount"
+          rules={[
+            {
+              required: true,
+              message: '가격을 입력해 주세요',
+            },
+          ]}
+        >
           <InputNumber placeholder="할인금액을 작성해 주세요" />
         </Form.Item>
         <Form.Item label="인당 추가요금" name="addPrice">
