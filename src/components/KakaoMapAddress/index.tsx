@@ -25,7 +25,6 @@ interface KakaoMapAddressProps {
 const KakaoMapAddress = ({ addValue, setAddValue, onSelectAddress }: KakaoMapAddressProps) => {
   const [map, setMap] = useState<any>();
   const [marker, setMarker] = useState<any>();
-  const [address, setAddress] = useState<string>('');
 
   const [form] = Form.useForm();
 
@@ -98,7 +97,6 @@ const KakaoMapAddress = ({ addValue, setAddValue, onSelectAddress }: KakaoMapAdd
             marker.setPosition(currentPos);
             marker.setMap(map);
 
-            setAddress(address); // Input에 보여줄 주소 업데이트
             setAddValue(address); // 부모의 상태에 주소 업데이트
             onSelectAddress(address); // 부모로 전달
           } else {

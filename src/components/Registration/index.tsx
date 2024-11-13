@@ -171,16 +171,6 @@ const Registration = () => {
     fetchSpaceData();
   }, [spaceId, form]);
 
-  const handleUser = (value: any) => {
-    const targetUser = user?.find((x: any) => x.userName === value);
-    const phoneNumber = targetUser?.phoneNumber;
-    if (phoneNumber) {
-      form.setFieldsValue({ spaceAdminPhoneNumber: phoneNumber });
-    } else {
-      form.setFieldsValue({ spaceAdminPhoneNumber: '' });
-    }
-  };
-
   return (
     <RegistrationStyled>
       <p>공간정보를 입력해주세요</p>
@@ -432,13 +422,7 @@ const Registration = () => {
           name="spaceAdminName"
           rules={[{ required: true, message: '관리자 이름을 입력해주세요' }]}
         >
-          {/* <Input placeholder="공간 관리자를 작성해 주세요" /> */}
-          <Select
-            placeholder="관리자 이름을 입력하세요"
-            allowClear
-            options={userOption}
-            onChange={(value) => handleUser(value)}
-          />
+          <Input placeholder="공간 관리자를 작성해 주세요" />
         </Form.Item>
         <Form.Item
           label="관리자 전화번호"
