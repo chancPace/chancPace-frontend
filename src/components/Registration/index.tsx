@@ -196,9 +196,9 @@ const Registration = () => {
           spaceName: '',
           spaceLocation: '',
           spaceLocationDetail: '',
-          description: 'null',
+          description: '',
           spacePrice: '',
-          discount: 0,
+          discount: null,
           amenities: '',
           spaceStatus: 'UNAVAILABLE',
           isOpen: true,
@@ -328,7 +328,7 @@ const Registration = () => {
           <Switch />
         </Form.Item>
         <Form.Item
-          label="최소 인원"
+          label="기준 인원"
           name="minGuests"
           rules={[
             {

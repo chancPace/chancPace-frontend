@@ -47,6 +47,7 @@ const AppWrapper = ({ Component, pageProps }: { Component: any; pageProps: any }
 
   if (isLoggedIn) {
     if (userInfo?.role === 'HOST' || userInfo?.role === 'ADMIN') {
+      console.log("🚀 ~ AppWrapper ~ userInfo:", userInfo)
       return (
         <>
           <Header />

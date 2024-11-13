@@ -8,7 +8,6 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/utill/redux/store';
 
 const MainPage = () => {
-  //FIXME -  이거 뭐임???
   const userId = useSelector((state: RootState) => state.user.userInfo?.id);
   console.log('🚀 ~ MainPage ~ userId:', userId);
   const [todayBooking, setTodayBooking] = useState();
