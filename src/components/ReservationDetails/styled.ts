@@ -1,12 +1,12 @@
 import styled from 'styled-components';
 
 export const ReservationDetailsStyled = styled.div`
-    .btn-box {
-        width: 100%;
-        display: flex;
-        justify-content: flex-end;
-        .ant-btn {
-            margin: 5px;
-        }
-    }
+  .top {
+    display: flex;
+    justify-content: space-between;
+    margin: ${({ theme }) => theme.spacing.md} 0;
+  }
+  p {
+    font-size: ${({ theme }) => theme.fontSizes.xl};
+  }
 `;

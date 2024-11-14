@@ -25,35 +25,6 @@ interface DataType {
   paymentId: number;
 }
 
-const columns: TableColumnsType<DataType> = [
-  {
-    title: '공간명',
-    dataIndex: 'spaceName',
-  },
-  {
-    title: '예약자',
-    dataIndex: 'name',
-    width: '10%',
-  },
-  {
-    title: '방문일자',
-    dataIndex: 'date',
-  },
-  {
-    title: '방문시간',
-    dataIndex: 'time',
-  },
-  {
-    title: '전화번호',
-    dataIndex: 'phoneNumber',
-  },
-  {
-    title: '금액',
-    dataIndex: 'paymentAmount',
-    render: (value) => value.toLocaleString(),
-  },
-];
-
 const ReservationInquiry = () => {
   const router = useRouter();
   const userId = useSelector((state: RootState) => state.user.userInfo?.id); // 리덕스에서 userId 가져옴
@@ -71,9 +42,7 @@ const ReservationInquiry = () => {
             .map((space: SpaceType) => {
               return space.bookings?.map((booking) => {
                 const user = booking.user;
-                const payment = user?.payments.find(
-                  (p) => p.id === booking.paymentId
-                );
+                const payment = user?.payments.find((p) => p.id === booking.paymentId);
                 return {
                   key: booking.id,
                   paymentId: booking.paymentId,
@@ -104,9 +73,7 @@ const ReservationInquiry = () => {
     },
     onSubmit: (values) => {
       const filtered = data.filter((item) =>
-        Object.values(item).some((value) =>
-          String(value).toLowerCase().includes(values.searchText.toLowerCase())
-        )
+        Object.values(item).some((value) => String(value).toLowerCase().includes(values.searchText.toLowerCase()))
       );
       setFilteredData(filtered);
     },
@@ -122,6 +89,40 @@ const ReservationInquiry = () => {
   const handleRowClick = (record: DataType) => {
     router.push(`/reservation/details?id=${record.paymentId}`);
   };
+
+  const columns: TableColumnsType<DataType> = [
+    {
+      title: '공간명',
+      dataIndex: 'spaceName',
+    },
+    {
+      title: '예약자',
+      dataIndex: 'name',
+      width: '10%',
+    },
+    {
+      title: '방문일자',
+      dataIndex: 'date',
+    },
+    {
+      title: '방문시간',
+      dataIndex: 'time',
+    },
+    {
+      title: '전화번호',
+      dataIndex: 'phoneNumber',
+    },
+    {
+      title: '금액',
+      dataIndex: 'paymentAmount',
+      render: (value) => `${value.toLocaleString()}원`,
+    },
+    {
+      title: '상세 페이지',
+      dataIndex: 'action',
+      render: (_: any, record: any) => <a onClick={() => handleRowClick(record)}>상세 보기</a>,
+    },
+  ];
 
   return (
     <ReservationInquiryStyled>
@@ -139,13 +140,7 @@ const ReservationInquiry = () => {
         </Button>
       </form>
       <div className="inquiry-section">
-        <Table<DataType>
-          columns={columns}
-          dataSource={filteredData}
-          onRow={(record) => ({
-            onClick: () => handleRowClick(record),
-          })}
-        />
+        <Table<DataType> columns={columns} dataSource={filteredData} />
       </div>
     </ReservationInquiryStyled>
   );

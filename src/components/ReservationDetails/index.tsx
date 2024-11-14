@@ -69,9 +69,12 @@ const reservationdetails = () => {
 
   return (
     <ReservationDetailsStyled>
-      <p>예약 상세조회</p>
-      <br />
-      <br />
+      <div className="top">
+        <p>예약 상세조회</p>
+        <div className="btn-box">
+          <Button onClick={showCancelModal}>취소</Button>
+        </div>
+      </div>
       <Descriptions bordered>
         <Descriptions.Item label="예약자">{details?.userName}</Descriptions.Item>
         <Descriptions.Item label="예약자 이메일">{details?.userEmail}</Descriptions.Item>
@@ -79,17 +82,15 @@ const reservationdetails = () => {
         <Descriptions.Item label="예약 일자">{details?.date}</Descriptions.Item>
         <Descriptions.Item label="예약 시간">{details?.time}</Descriptions.Item>
         <Descriptions.Item label="결제 방법">{details?.paymentMethod}</Descriptions.Item>
-        <Descriptions.Item label="카드">{details?.cardNumber}</Descriptions.Item>
+        <Descriptions.Item label="카드">
+          {details?.cardNumber === 'UNKNOWN' ? '-' : details?.cardNumber}
+        </Descriptions.Item>
         <Descriptions.Item label="결제 일자">{details?.payDate}</Descriptions.Item>
         <Descriptions.Item label="공급가">{details?.suppliedPrice?.toLocaleString()}</Descriptions.Item>
         <Descriptions.Item label="부가세">{details?.vat?.toLocaleString()}</Descriptions.Item>
         <Descriptions.Item label="예약 금액">{details?.price?.toLocaleString()}</Descriptions.Item>
       </Descriptions>
-      <br />
-      <br />
-      <div className="btn-box">
-        <Button onClick={showCancelModal}>취소</Button>
-      </div>
+
       <Modal
         title="결제 취소"
         visible={isModalVisible}
