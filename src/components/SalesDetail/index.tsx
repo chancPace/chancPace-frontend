@@ -22,21 +22,22 @@ const SalesDetail = () => {
     fetchDetail();
   }, [id]);
   const totalAmount = details ? details.paymentPrice + (details.couponPrice ?? 0) : 0;
-  const feeAmount = totalAmount * 0.05; // 수수료 (5%)
+  const feeAmount = totalAmount * 0.05;
   const settlementAmount = totalAmount - feeAmount;
 
   return (
     <SalesDetailStyled>
+      <p>매출 상세</p>
       {details ? (
         <Descriptions bordered>
           <Descriptions.Item label="공간명">{details.booking?.space?.spaceName}</Descriptions.Item>
           <Descriptions.Item label="예약자">{details.user?.userName}</Descriptions.Item>
           <Descriptions.Item label="고객 연락처">{details.user?.phoneNumber}</Descriptions.Item>
-          <Descriptions.Item label="고객 결제 금액">{details.paymentPrice.toLocaleString()}</Descriptions.Item>
-          <Descriptions.Item label="쿠폰 사용금액">{details.couponPrice?.toLocaleString()}</Descriptions.Item>
-          <Descriptions.Item label="매출액">{totalAmount.toLocaleString()}</Descriptions.Item>
-          <Descriptions.Item label="수수료">{feeAmount.toLocaleString()}</Descriptions.Item>
-          <Descriptions.Item label="정산예정액">{settlementAmount.toLocaleString()}</Descriptions.Item>
+          <Descriptions.Item label="고객 결제 금액">{details.paymentPrice.toLocaleString() + '원'}</Descriptions.Item>
+          <Descriptions.Item label="쿠폰 사용금액">{details.couponPrice?.toLocaleString() + '원'}</Descriptions.Item>
+          <Descriptions.Item label="매출액">{totalAmount.toLocaleString() + '원'}</Descriptions.Item>
+          <Descriptions.Item label="수수료">{feeAmount.toLocaleString() + '원'}</Descriptions.Item>
+          <Descriptions.Item label="정산예정액">{settlementAmount.toLocaleString() + '원'}</Descriptions.Item>
         </Descriptions>
       ) : (
         <p>로딩 중...</p>

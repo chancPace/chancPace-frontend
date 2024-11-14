@@ -6,10 +6,12 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/utill/redux/store';
 import dayjs from 'dayjs';
 import { getMySpace } from '@/pages/api/spaceApi';
-import Charts from '@/components/charts';
+import ChartDay from '@/components/ChartDay';
+import { Booking, DataType, Payment, SpaceType } from '@/types';
 
 const MainPage = () => {
   const userId = useSelector((state: RootState) => state.user.userInfo?.id);
+  const [filteredData, setFilteredData] = useState<DataType[]>([]);
   const [todayBooking, setTodayBooking] = useState();
   const [todayPayment, setTodayPayment] = useState();
   const [todayReview, setTodayReview] = useState();
@@ -18,8 +20,31 @@ const MainPage = () => {
   const fetchData = async () => {
     if (userId) {
       const mySpace = await getMySpace(userId);
+      const transformedData = mySpace.data
+        .map((space: SpaceType) => {
+          return space.bookings?.map((booking: Booking) => {
+            const user = booking.user;
+            const payment = user?.payments.find((p: Payment) => p.id === booking.paymentId);
+            const paymentAmount = payment ? payment.paymentPrice : 0;
+            const couponAmount = payment ? payment.couponPrice : 0;
+            const totalAmount = paymentAmount + couponAmount;
+            const feeAmount = totalAmount * 0.05;
+            const settlementAmount = totalAmount - feeAmount;
+            return {
+              key: booking.id,
+              paymentId: booking.paymentId,
+              date: booking.createdAt,
+              spaceName: space.spaceName,
+              totalAmount,
+              feeAmount,
+              settlementAmount,
+            };
+          });
+        })
+        .flat();
+      setFilteredData(transformedData);
+
       const bookings = mySpace.data.filter((x: any) => x.bookings.length !== 0);
-      console.log('🚀 ~ fetchData ~ bookings:', bookings);
       const todayUse = bookings.map((x: any) =>
         x.bookings.filter((x: any) => x.startDate === dayjs().format('YYYY-MM-DD'))
       );
@@ -66,7 +91,7 @@ const MainPage = () => {
           </div>
         </div>
       </div>
-      <Charts />
+      <ChartDay filteredData={filteredData} />
     </MainStyled>
   );
 };

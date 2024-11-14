@@ -171,3 +171,22 @@ export interface stopSpace {
   spaceId: string;
   isOpen: boolean;
 }
+
+export interface DataType {
+  key: React.Key;
+  bookingStatus: string;
+  createdAt: string;
+  endTime: number;
+  id: number;
+  spaceId: number;
+  startData: string;
+  startTime: number;
+  updatedAt: string;
+  userId: number;
+  paymentId: number;
+  date: string;
+  spaceName: string;
+  totalAmount: number;
+  feeAmount: number;
+  settlementAmount: number;
+}
