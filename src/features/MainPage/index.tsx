@@ -1,37 +1,41 @@
 import { useEffect, useState } from 'react';
-
 import { CreditCardOutlined, HomeOutlined, UserOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import { MainStyled } from './style';
-import { getMySpaceBooking } from '@/pages/api/bookingApi';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/utill/redux/store';
+import dayjs from 'dayjs';
+import { getMySpace } from '@/pages/api/spaceApi';
+// import Charts from '@/components/charts';
 
 const MainPage = () => {
   const userId = useSelector((state: RootState) => state.user.userInfo?.id);
-  console.log('🚀 ~ MainPage ~ userId:', userId);
   const [todayBooking, setTodayBooking] = useState();
   const [todayPayment, setTodayPayment] = useState();
+  const [todayReview, setTodayReview] = useState();
   const router = useRouter();
 
   const fetchData = async () => {
     if (userId) {
-      const result = await getMySpaceBooking(userId);
+      const mySpace = await getMySpace(userId);
+      const bookings = mySpace.data.filter((x: any) => x.bookings.length !== 0);
+      console.log('🚀 ~ fetchData ~ bookings:', bookings);
+      const todayUse = bookings.map((x: any) =>
+        x.bookings.filter((x: any) => x.startDate === dayjs().format('YYYY-MM-DD'))
+      );
+      const todayPay = bookings.map((x: any) =>
+        x.bookings.filter((x: any) => dayjs(x.createdAt).format('YYYY-MM-DD') === dayjs().format('YYYY-MM-DD'))
+      );
+      const todayReview = bookings.map((x: any) =>
+        x.reviews.filter((x: any) => dayjs(x.createdAt).format('YYYY-MM-DD') === dayjs().format('YYYY-MM-DD'))
+      );
+      const todayUseCount = todayUse.filter((x: any) => x.length !== 0);
+      const todayPayCount = todayPay.filter((x: any) => x.length !== 0);
+      const todayReviewCount = todayReview.filter((x: any) => x.length !== 0);
+      setTodayBooking(todayUseCount.length);
+      setTodayPayment(todayPayCount.length);
+      setTodayReview(todayReviewCount.length);
     }
-    // const user = await getAllUser();
-    // const space = await getAllSpace();
-    // const booking = await getAllBooking();
-    // const payments = await getAllPayment();
-
-    // const todaybooking = booking?.data?.filter((x: any, i: number) => {
-    //   return x?.startDate === dayjs().format('YYYY-MM-DD');
-    // });
-    // const todaypayment = payments?.data?.filter((x: any, i: number) => {
-    //   return dayjs(x?.createdAt).format('YYYY-MM-DD') === dayjs().format('YYYY-MM-DD');
-    // });
-
-    // setTodayBooking(todaybooking.length);
-    // setTodayPayment(todaypayment.length);
   };
   useEffect(() => {
     fetchData();
@@ -48,7 +52,7 @@ const MainPage = () => {
           </div>
         </div>
         <div className="content" onClick={() => router.push('/sales')}>
-          <p className="title">결제 건수</p>
+          <p className="title">금일 결제 건수</p>
           <div className="bottom">
             <CreditCardOutlined className="icon" />
             <span>{todayPayment} 건</span>
@@ -58,7 +62,7 @@ const MainPage = () => {
           <p className="title">금일 등록 리뷰</p>
           <div className="bottom">
             <UserOutlined className="icon" />
-            {/* <span>{review} 건</span> */}
+            <span>{todayReview} 건</span>
           </div>
         </div>
       </div>

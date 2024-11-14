@@ -14,7 +14,7 @@ export interface SidebarProps {
 }
 
 const Sidebar = ({ className, children }: SidebarProps) => {
-  const role = useSelector((state: RootState) => state.user.role);
+  const role = useSelector((state: RootState) => state.user.userInfo?.role);
   return (
     <SidebarStyled className={clsx('Sidebar', className)}>
       <div>
