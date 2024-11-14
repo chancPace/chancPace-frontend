@@ -101,6 +101,7 @@ export interface Booking {
   endTime: number;
   bookingStatus: string;
   paymentId: number;
+  createdAt: Date;
   user?: {
     userName: string;
     phoneNumber: string;

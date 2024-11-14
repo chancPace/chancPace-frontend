@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/utill/redux/store';
 import dayjs from 'dayjs';
 import { getMySpace } from '@/pages/api/spaceApi';
-// import Charts from '@/components/charts';
+import Charts from '@/components/charts';
 
 const MainPage = () => {
   const userId = useSelector((state: RootState) => state.user.userInfo?.id);
@@ -66,7 +66,7 @@ const MainPage = () => {
           </div>
         </div>
       </div>
-      {/* <Charts /> */}
+      <Charts />
     </MainStyled>
   );
 };

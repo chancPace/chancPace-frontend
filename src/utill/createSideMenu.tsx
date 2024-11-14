@@ -53,6 +53,16 @@ const SideBar = () => {
     {
       key: '/sales',
       label: '매출조회',
+      children: [
+        {
+          key: '/sales/day',
+          label: '일별 조회',
+        },
+        {
+          key: '/sales/month',
+          label: '월별 조회',
+        },
+      ],
     },
   ]);
 

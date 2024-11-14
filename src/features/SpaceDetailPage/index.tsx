@@ -168,7 +168,7 @@ const SpaceDetailPage = () => {
                   onOk: async () => {
                     message.info('중단되었습니다.');
                     const updatedData = { spaceId, isOpen: false };
-                    StopSpace(updatedData);
+                    await StopSpace(updatedData);
                     router.push('/myspace');
                   },
                 });
