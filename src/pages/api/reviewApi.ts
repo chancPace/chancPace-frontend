@@ -7,14 +7,11 @@ const API_URL = `${
   isLocal
     ? `http://${process.env.NEXT_PUBLIC_LOCAL_HOST}:${process.env.NEXT_PUBLIC_LOCAL_PORT}`
     : `http://${process.env.NEXT_PUBLIC_SERVER_HOST}:${process.env.NEXT_PUBLIC_SERVER_PORT}`
-}/api/review`;
+}/api/review/`;
 
-export const updateReview = async (
-  reviewId: number,
-  reviewData: Partial<Review>
-) => {
+export const updateReview = async (reviewId: number, reviewData: Partial<Review>) => {
   try {
-    const response = await axios.patch(`${API_URL}/update-review`, {
+    const response = await axios.patch(`${API_URL}update-review`, {
       reviewId,
       ...reviewData, // 필요한 데이터만 전송
     });

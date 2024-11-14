@@ -4,9 +4,7 @@ import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/utill/redux/store';
 
-export const createSidebarMenus = (
-  menus: MenuProps['items']
-): MenuProps['items'] => {
+export const createSidebarMenus = (menus: MenuProps['items']): MenuProps['items'] => {
   if (!menus) return menus;
 
   return menus.map((menu) => {
@@ -27,7 +25,7 @@ export const createSidebarMenus = (
 
 const SideBar = () => {
   const router = useRouter();
-  const role = useSelector((state: RootState) => state.user.role); // role을 가져옴
+  const role = useSelector((state: RootState) => state.user.userInfo?.role); // role을 가져옴
 
   const sidebarMenus = createSidebarMenus([
     {
@@ -38,10 +36,6 @@ const SideBar = () => {
       key: '/space',
       label: '공간 관리',
       children: [
-        {
-          key: '/registration',
-          label: '공간 등록',
-        },
         {
           key: '/myspace',
           label: '공간 조회',

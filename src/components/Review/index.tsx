@@ -1,18 +1,20 @@
 import { ReviewStyled } from './styled';
-import { Avatar, List, message, Modal, Rate } from 'antd';
+import { message, Modal, Rate, Table } from 'antd';
 import { useEffect, useState } from 'react';
 import { getMySpace } from '@/pages/api/spaceApi';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/utill/redux/store';
 import { SpaceType } from '@/types';
 import { updateReview } from '@/pages/api/reviewApi';
+import dayjs from 'dayjs';
+import router from 'next/router';
 const { confirm } = Modal;
 
-const Review = () => {
-  const userId = useSelector((state: RootState) => state.user.id);
+const ReviewListPage = () => {
+  const userId = useSelector((state: RootState) => state.user.userInfo?.id);
   //리뷰데이터 저장
-  const [reviews, setReviews] = useState<SpaceType[]>([]);
-
+  const [reviews, setReviews] = useState<any>([]);
+  const [tableData, setTableData] = useState<any[]>([]);
   //리뷰 가져오기 (AVAILABLE 상태인것만)
   useEffect(() => {
     const fetchReview = async () => {
@@ -22,15 +24,24 @@ const Review = () => {
           const filteredData = response.data
             .map((space: SpaceType) => ({
               ...space,
-              reviews: space.reviews?.filter(
-                (review) => review.reviewStatus === 'AVAILABLE'
-              ),
+              reviews: space.reviews?.filter((review) => review.reviewStatus === 'AVAILABLE'),
             }))
-            .filter(
-              (space: SpaceType) => space.reviews && space.reviews.length > 0
-            );
-
+            .filter((space: SpaceType) => space.reviews && space.reviews.length > 0);
           setReviews(filteredData);
+
+          // Table에 사용할 데이터 구조로 변환
+          const tableFormattedData = filteredData.flatMap((space: any) =>
+            space.reviews.map((review: any) => ({
+              spaceName: space.spaceName,
+              spaceLocation: space.spaceLocation,
+              reviewRating: review.reviewRating,
+              reviewComment: review.reviewComment,
+              reviewId: review.id,
+              reviewerName: review.user?.userName,
+              createdAt: dayjs(review.createdAt).format('YYYY-MM-DD'),
+            }))
+          );
+          setTableData(tableFormattedData);
         } catch (error) {
           console.error('리뷰 불러오기 실패', error);
         }
@@ -65,45 +76,67 @@ const Review = () => {
       okType: 'danger',
       cancelText: '취소',
       onOk() {
-        handleDeleteClick(reviewId); // 확인 버튼 클릭 시 삭제 로직 실행
+        handleDeleteClick(reviewId);
       },
-      onCancel() {
-      },
+      onCancel() {},
     });
   };
 
+  //리스트 클릭 시 상세 페이지로 이동
+  const handleRowClick = (record: any) => {
+    router.push(`/review/reviewdetail/${record}`);
+  };
+
+  const columns = [
+    {
+      title: '공간명',
+      dataIndex: 'spaceName',
+      key: 'spaceName',
+    },
+    {
+      title: '공간 위치',
+      dataIndex: 'spaceLocation',
+      key: 'spaceLocation',
+    },
+    {
+      title: '리뷰 작성자',
+      dataIndex: 'reviewerName',
+      key: 'reviewerName',
+    },
+    {
+      title: '리뷰 내용',
+      dataIndex: 'reviewComment',
+      key: 'reviewComment',
+      render: (text: string) => text || '-',
+    },
+    {
+      title: '별점',
+      dataIndex: 'reviewRating',
+      key: 'reviewRating',
+      render: (value: number) => <Rate disabled value={value} />,
+    },
+    {
+      title: '작성일자',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+    },
+    {
+      title: '상세 페이지',
+      dataIndex: 'action',
+      render: (_: any, record: any) => <a onClick={() => handleRowClick(record.reviewId)}>상세 보기</a>,
+    },
+    {
+      title: '삭제',
+      key: 'delete',
+      render: (_: any, record: any) => <a onClick={() => showDeleteConfirm(record.id)}>삭제하기</a>,
+    },
+  ];
+
   return (
     <ReviewStyled>
-      {reviews.map((space) => (
-        <div className="review-list" key={space.id}>
-          <div className="top">
-            <p>{space.spaceName}</p>
-          </div>
-          {space.reviews?.map((review) => (
-            <div key={review.id}>
-              <div className="rating">
-                <Rate disabled defaultValue={review.reviewRating ?? 0} />
-              </div>
-              <div className="bottom">
-                <p>
-                  작성자: {review.user ? review.user.userName : '알 수 없음'}
-                </p>
-                <p>리뷰: {review.reviewComment}</p>
-                <p>
-                  작성일자: {new Date(review.updatedAt).toLocaleDateString()}
-                </p>
-                <p
-                  className="delete"
-                  onClick={() => showDeleteConfirm(review.id)}
-                >
-                  삭제하기
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      ))}
+      <p>리뷰 목록</p>
+      <Table columns={columns} dataSource={tableData} />
     </ReviewStyled>
   );
 };
-export default Review;
+export default ReviewListPage;

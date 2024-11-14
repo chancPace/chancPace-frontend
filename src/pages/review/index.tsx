@@ -1,11 +1,7 @@
-import Review from '@/components/Review';
+import ReviewListPage from '@/components/Review';
 
-const review = () => {
-  return (
-    <>
-      <Review />
-    </>
-  );
+const Review = () => {
+  return <ReviewListPage />;
 };
 
-export default review;
+export default Review;

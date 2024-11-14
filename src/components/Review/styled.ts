@@ -1,6 +1,10 @@
 import styled from 'styled-components';
 
 export const ReviewStyled = styled.div`
+  p {
+    font-size: ${({ theme }) => theme.fontSizes.xl};
+    margin-bottom: ${({ theme }) => theme.spacing.md};
+  }
 
   .review-list {
     border-bottom: 1px solid lightgray;

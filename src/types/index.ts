@@ -105,8 +105,10 @@ export interface Booking {
     userName: string;
     phoneNumber: string;
     payments: {
-      couponPrice: any; id: number; paymentPrice: number 
-}[];
+      couponPrice: any;
+      id: number;
+      paymentPrice: number;
+    }[];
   };
 }
 
@@ -135,4 +137,36 @@ export interface Reservation {
   phoneNumber: string;
   spaceName: string;
   time: string;
+}
+
+export interface Space {
+  id?: number;
+  spaceName?: string;
+  spaceLocation?: string;
+  description?: string;
+  spacePrice?: number;
+  discount?: number;
+  amenities?: string[]; // 편의시설 목록 (문자열 배열)
+  cleanTime?: number;
+  spaceStatus?: string; // 공간의 상태 ('AVAILABLE' 또는 'UNAVAILABLE')
+  isOpen?: boolean; // 공간이 열려 있는지 여부
+  guidelines?: string[]; // 주의사항 (문자열 배열)
+  categoryId?: number;
+  Minimum?: number; // 최소 인원
+  Maximum?: number; // 최대 인원
+  spaceImg?: { src?: string }[]; // 공간 이미지 배열
+  businessStartTime?: number;
+  businessEndTime?: number;
+  createdAt?: string;
+  spaceAdminName?: string;
+  spaceAdminPhoneNumber?: string;
+  addPrice?: number;
+  minGuests?: number;
+  maxGuests?: number;
+  spaceRating?: number;
+}
+
+export interface stopSpace {
+  spaceId: string;
+  isOpen: boolean;
 }
