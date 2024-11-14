@@ -1,27 +1,22 @@
 import { useEffect, useState } from 'react';
 import { MySpaceStyled } from './styled';
-import { Space, Table } from 'antd';
+import { Button, Space, Table } from 'antd';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/utill/redux/store';
 import { useRouter } from 'next/router';
 import { getMySpace } from '@/pages/api/spaceApi';
 import { SpaceType } from '@/types';
+import Link from 'next/link';
 const { Column } = Table;
 
 const MySpace = () => {
   const router = useRouter();
   const [space, setSpace] = useState([]);
-  const userId = useSelector((state: RootState) => state.user.id);
+  const userId = useSelector((state: RootState) => state.user.userInfo?.id);
 
-  const handleEdit = (spaceId: number) => {
-    router.push({
-      pathname: '/registration',
-      query: { spaceId },
-    });
-  };
   useEffect(() => {
     const fetchSpace = async () => {
-      if (userId !== null) {
+      if (userId) {
         try {
           const response = await getMySpace(userId);
           const openSpace = response?.data?.filter((x: SpaceType, i: number) => {
@@ -38,6 +33,14 @@ const MySpace = () => {
 
   return (
     <MySpaceStyled>
+      <div className="top">
+        <p>내 공간 목록</p>
+        <Link href="registration">
+          <Button type="primary" className="register">
+            등록
+          </Button>
+        </Link>
+      </div>
       <Table<SpaceType> dataSource={space} rowKey="spaceId">
         <Column title="공간 이름" dataIndex="spaceName" key="spaceName" />
         <Column
@@ -59,13 +62,13 @@ const MySpace = () => {
           title="금액/시간당"
           dataIndex="spacePrice"
           key="spacePrice"
-          render={(price: number) => price.toLocaleString()}
+          render={(price: number) => `${price.toLocaleString()}원`}
         />
         <Column
           title="할인금액/시간당"
           dataIndex="discount"
           key="discount"
-          render={(discount: number) => discount.toLocaleString()}
+          render={(discount: number) => `${discount.toLocaleString()}원`}
         />
         <Column
           title="상태"
@@ -74,12 +77,11 @@ const MySpace = () => {
           render={(spaceStatus: string) => (spaceStatus === 'AVAILABLE' ? '승인 완료' : '승인 미완료')}
         />
         <Column
-          title="Action"
+          title="상페 페이지"
           key="action"
           render={(_: any, record) => (
             <Space size="middle">
-              <a onClick={() => handleEdit(record.id)}>수정</a>
-              <a onClick={() => handleEdit(record.id)}>삭제</a>
+              <a onClick={() => router.push(`/myspace/spacedetail/${record.id}`)}>상세 보기</a>
             </Space>
           )}
         />
