@@ -1,3 +1,4 @@
+import { stopSpace } from '@/types';
 import axios from 'axios';
 import Cookies from 'js-cookie'; // 쿠키 라이브러리 추가
 
@@ -7,12 +8,12 @@ const API_URL = `${
   isLocal
     ? `http://${process.env.NEXT_PUBLIC_LOCAL_HOST}:${process.env.NEXT_PUBLIC_LOCAL_PORT}`
     : `http://${process.env.NEXT_PUBLIC_SERVER_HOST}:${process.env.NEXT_PUBLIC_SERVER_PORT}`
-}/api/space`;
+}/api/space/`;
 
 export const addNewSpace = async (spaceData: FormData) => {
   try {
     const token = Cookies.get('token'); // 쿠키에 저장된 'token' 이름으로 가져옴
-    const response = await axios.post(`${API_URL}/add-new-space`, spaceData, {
+    const response = await axios.post(`${API_URL}add-new-space`, spaceData, {
       headers: {
         'Content-Type': 'multipart/form-data', // FormData 전송을 위한 헤더 설정
         Authorization: `Bearer ${token}`, // 가져온 토큰을 Authorization 헤더에 추가
@@ -27,7 +28,7 @@ export const addNewSpace = async (spaceData: FormData) => {
 
 export const getMySpace = async (userId: number) => {
   try {
-    const reponse = await axios.get(`${API_URL}/get-my-space`, {
+    const reponse = await axios.get(`${API_URL}get-my-space`, {
       params: { userId },
     });
     return reponse.data;
@@ -39,7 +40,7 @@ export const getMySpace = async (userId: number) => {
 
 export const getOneSpace = async (spaceId: string) => {
   try {
-    const response = await axios.get(`${API_URL}/get-one-space`, {
+    const response = await axios.get(`${API_URL}get-one-space`, {
       params: { spaceId },
     });
     return response.data;
@@ -52,12 +53,23 @@ export const getOneSpace = async (spaceId: string) => {
 export const updateSpace = async (spaceData: FormData, spaceId: string) => {
   try {
     const token = Cookies.get('token');
-    const response = await axios.patch(`${API_URL}/update-space?spaceId=${spaceId}`, spaceData, {
+    const response = await axios.patch(`${API_URL}update-space?spaceId=${spaceId}`, spaceData, {
       headers: {
         // 'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${token}`,
       },
     });
+    return response.data;
+  } catch (error) {
+    console.error('공간 수정 실패', error);
+    throw error;
+  }
+};
+
+// 공간 중단
+export const StopSpace = async (value: stopSpace) => {
+  try {
+    const response = await axios.patch(`${API_URL}update-space-status`, value);
     return response.data;
   } catch (error) {
     console.error('공간 수정 실패', error);
