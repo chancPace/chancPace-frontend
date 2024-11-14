@@ -25,4 +25,14 @@ const nextConfig = {
   },
 };
 
+module.exports = {
+  webpack(config, { isServer }) {
+    if (isServer) {
+      config.externals = ['rc-input', ...config.externals];
+    }
+    return config;
+  },
+};
+
+
 module.exports = withTM(nextConfig);
