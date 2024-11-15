@@ -7,6 +7,8 @@ import {
   CategoryScale,
   LinearScale,
   BarElement,
+  BarController,
+  LineController,
   LineElement,
   PointElement,
   Title,
@@ -17,7 +19,18 @@ import {
 } from 'chart.js';
 import { useRouter } from 'next/router';
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  LineElement,
+  PointElement,
+  BarController,
+  LineController,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const ChartDay = ({ filteredData }: { filteredData: any[] }) => {
   const router = useRouter();

@@ -8,6 +8,8 @@ import {
   LinearScale,
   BarElement,
   LineElement,
+  BarController,
+  LineController,
   PointElement,
   Title,
   Tooltip,
@@ -16,7 +18,18 @@ import {
   ChartOptions,
 } from 'chart.js';
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  LineElement,
+  PointElement,
+  BarController,
+  LineController,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const ChartMonth = ({ filteredData }: { filteredData: any[] }) => {
   const currentYear = dayjs().year().toString();
