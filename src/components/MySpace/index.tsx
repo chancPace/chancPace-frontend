@@ -20,7 +20,7 @@ const MySpace = () => {
         try {
           const response = await getMySpace(userId);
           const openSpace = response?.data?.filter((x: SpaceType, i: number) => {
-            return x.isOpen === true;
+            return x.isDelete === false;
           });
           setSpace(openSpace);
         } catch (error) {

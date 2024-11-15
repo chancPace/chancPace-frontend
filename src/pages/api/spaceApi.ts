@@ -1,4 +1,4 @@
-import { stopSpace } from '@/types';
+import { isSpace } from '@/types';
 import axios from 'axios';
 import Cookies from 'js-cookie'; // 쿠키 라이브러리 추가
 
@@ -67,9 +67,20 @@ export const updateSpace = async (spaceData: FormData, spaceId: string) => {
 };
 
 // 공간 중단
-export const StopSpace = async (value: stopSpace) => {
+export const stopSpace = async (value: isSpace) => {
   try {
     const response = await axios.patch(`${API_URL}update-space-status`, value);
+    return response.data;
+  } catch (error) {
+    console.error('공간 수정 실패', error);
+    throw error;
+  }
+};
+
+// 공간 삭제
+export const deleteSpace = async (value: isSpace) => {
+  try {
+    const response = await axios.patch(`${API_URL}update-space`, value);
     return response.data;
   } catch (error) {
     console.error('공간 수정 실패', error);
