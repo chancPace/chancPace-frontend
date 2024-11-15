@@ -7,8 +7,8 @@ const SpaceDetailStyled = styled.div`
   .buttonWrap {
     display: flex;
     justify-content: right;
-    margin: ${({ theme }) => theme.spacing.md} 0;
-    gap: 20px;
+    margin-bottom: ${({ theme }) => theme.spacing.md};
+    gap: 15px;
   }
 `;
 
