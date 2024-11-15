@@ -1,5 +1,5 @@
 import { Review } from '@/types';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 
 const isLocal = process.env.NODE_ENV === 'development';
 
@@ -19,5 +19,24 @@ export const updateReview = async (reviewId: number, reviewData: Partial<Review>
   } catch (error) {
     console.error('리뷰 수정 실패', error);
     throw error;
+  }
+};
+
+// 리뷰 상세
+export const getOneReview = async (reviewId: number) => {
+  try {
+    const response = await axios.get(`${API_URL}get-one-review`, {
+      params: { reviewId },
+    });
+    return response.data;
+  } catch (error: any) {
+    const axiosError = error as AxiosError;
+    if (axiosError.response) {
+      console.log('서버 응답:', axiosError.response.data);
+      console.log('상태 코드:', axiosError.response.status);
+    } else {
+      console.log('요청 오류:', axiosError.message);
+    }
+    throw axiosError;
   }
 };

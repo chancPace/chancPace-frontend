@@ -12,10 +12,8 @@ const { confirm } = Modal;
 
 const ReviewListPage = () => {
   const userId = useSelector((state: RootState) => state.user.userInfo?.id);
-  //리뷰데이터 저장
   const [reviews, setReviews] = useState<any>([]);
   const [tableData, setTableData] = useState<any[]>([]);
-  //리뷰 가져오기 (AVAILABLE 상태인것만)
   useEffect(() => {
     const fetchReview = async () => {
       if (userId) {
@@ -29,7 +27,6 @@ const ReviewListPage = () => {
             .filter((space: SpaceType) => space.reviews && space.reviews.length > 0);
           setReviews(filteredData);
 
-          // Table에 사용할 데이터 구조로 변환
           const tableFormattedData = filteredData.flatMap((space: any) =>
             space.reviews.map((review: any) => ({
               spaceName: space.spaceName,

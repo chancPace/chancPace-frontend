@@ -2,44 +2,46 @@ import { useRouter } from 'next/router';
 import { Descriptions, Rate } from 'antd';
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
-import { getOnePayment } from '@/pages/api/paymentApi';
 import ReviewDetailStyled from './style';
+import { getOneReview } from '@/pages/api/reviewApi';
 
 const ReviewDetailPage = () => {
   const router = useRouter();
   const { id } = router.query;
-  const paymentId = Number(id);
+  const reviewId = Number(id);
   const [data, setData] = useState<any>();
 
-  const fetchPaymentData = async () => {
-    try {
-      const response = await getOnePayment(paymentId);
-      const result = response.data;
-      setData(result);
-    } catch (error) {
-      console.log('결제 1개', error);
+  const fetchRevieData = async () => {
+    if (reviewId) {
+      try {
+        const response = await getOneReview(reviewId);
+        const result = response.data;
+        setData(result);
+      } catch (error) {
+        console.log('리뷰', error);
+      }
     }
   };
 
   useEffect(() => {
-    fetchPaymentData();
-  }, []);
+    fetchRevieData();
+  }, [reviewId]);
 
   const items = [
     {
       key: '1',
       label: '공간명',
-      children: data?.spaceName,
+      children: data?.space?.spaceName,
     },
     {
       key: '2',
       label: '공간 위치',
-      children: data?.spaceLocation,
+      children: data?.space?.spaceLocation,
     },
     {
       key: '3',
       label: '리뷰 작성자',
-      children: data?.review,
+      children: data?.user?.userName,
     },
     {
       key: '4',
