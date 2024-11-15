@@ -59,4 +59,5 @@ module.exports = withTM({
   env: {
     GENERATE_SOURCEMAP: process.env.GENERATE_SOURCEMAP || 'false',
   },
+  assetPrefix: '.',
 });
