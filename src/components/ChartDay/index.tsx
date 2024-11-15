@@ -26,16 +26,12 @@ const ChartDay = ({ filteredData }: { filteredData: any[] }) => {
   const [sales, setSales] = useState<any[]>([]);
   const [selectedMonth, setSelectedMonth] = useState<string>(currentMonth);
 
-  // 월별 날짜를 일별로 나누는 함수 (윤년, 2월, 31일 등 고려)
-  const getDaysInMonth = (month: number, year: number) => {
-    return new Date(year, month, 0).getDate();
-  };
-
+  // 해당 월의 일 (윤년, 2월, 31일 등 고려)
   const generateDailyDates = (month: number, year: number) => {
-    const daysInMonth = getDaysInMonth(month, year);
+    const daysInMonth = new Date(year, month, 0).getDate();
     const dates: string[] = [];
     for (let day = 1; day <= daysInMonth; day++) {
-      dates.push(`${month < 10 ? `0${month}` : month}-${day < 10 ? `0${day}` : day}`);
+      dates.push(day.toString());
     }
     return dates;
   };
@@ -50,7 +46,7 @@ const ChartDay = ({ filteredData }: { filteredData: any[] }) => {
       const date = dayjs(x.date);
       const month = date.month() + 1;
       const day = date.date();
-      const formattedDay = `${month < 10 ? `0${month}` : month}-${day < 10 ? `0${day}` : day}`;
+      const formattedDay = day.toString();
 
       if (month.toString() === selectedMonth) {
         dailySales[formattedDay] = dailySales[formattedDay] || {
@@ -86,8 +82,7 @@ const ChartDay = ({ filteredData }: { filteredData: any[] }) => {
   // 선택된 월의 일별 날짜들
   const days = generateDailyDates(parseInt(selectedMonth), dayjs().year());
   const formattedSales = sales.reduce((acc, item) => {
-    const formattedDate = dayjs(item.day).format('MM-DD');
-    acc[formattedDate] = {
+    acc[item.day] = {
       totalPaymentPrice: item.totalPaymentPrice,
       count: item.count,
       settlementAmount: item.settlementAmount,
