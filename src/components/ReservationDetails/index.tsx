@@ -86,9 +86,9 @@ const reservationdetails = () => {
           {details?.cardNumber === 'UNKNOWN' ? '-' : details?.cardNumber}
         </Descriptions.Item>
         <Descriptions.Item label="결제 일자">{details?.payDate}</Descriptions.Item>
-        <Descriptions.Item label="공급가">{details?.suppliedPrice?.toLocaleString()}</Descriptions.Item>
-        <Descriptions.Item label="부가세">{details?.vat?.toLocaleString()}</Descriptions.Item>
-        <Descriptions.Item label="예약 금액">{details?.price?.toLocaleString()}</Descriptions.Item>
+        <Descriptions.Item label="공급가">{details?.suppliedPrice?.toLocaleString() + '원'}</Descriptions.Item>
+        <Descriptions.Item label="부가세">{details?.vat?.toLocaleString() + '원'}</Descriptions.Item>
+        <Descriptions.Item label="예약 금액">{details?.price?.toLocaleString() + '원'}</Descriptions.Item>
       </Descriptions>
 
       <Modal

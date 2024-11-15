@@ -1,6 +1,6 @@
 import ReservationDetails from '@/components/ReservationDetails';
 
 const details = () => {
-    return <ReservationDetails />;
+  return <ReservationDetails />;
 };
 export default details;

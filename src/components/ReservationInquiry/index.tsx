@@ -37,7 +37,7 @@ const ReservationInquiry = () => {
     const fetchData = async () => {
       if (userId) {
         try {
-          const response = await getMySpace(userId); // userId로 API 호출
+          const response = await getMySpace(userId);
           const transformedData = response.data
             .map((space: SpaceType) => {
               return space.bookings?.map((booking) => {
@@ -87,7 +87,7 @@ const ReservationInquiry = () => {
 
   //리스트 클릭 시 상세 페이지로 이동
   const handleRowClick = (record: DataType) => {
-    router.push(`/reservation/details?id=${record.paymentId}`);
+    router.push(`/reservation/details/${record.paymentId}`);
   };
 
   const columns: TableColumnsType<DataType> = [
@@ -126,7 +126,8 @@ const ReservationInquiry = () => {
 
   return (
     <ReservationInquiryStyled>
-      <form className="search-section" onSubmit={formik.handleSubmit}>
+      <p>예약 목록</p>
+      {/* <form className="search-section" onSubmit={formik.handleSubmit}>
         <Input
           name="searchText"
           placeholder="검색어를 입력해주세요"
@@ -138,7 +139,7 @@ const ReservationInquiry = () => {
         <Button onClick={handleReset} style={{ marginLeft: 8 }}>
           전체 보기
         </Button>
-      </form>
+      </form> */}
       <div className="inquiry-section">
         <Table<DataType> columns={columns} dataSource={filteredData} />
       </div>
