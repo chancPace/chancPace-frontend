@@ -34,7 +34,6 @@
 //   },
 // };
 
-
 // module.exports = withTM(nextConfig);
 
 const withTM = require('next-transpile-modules')([
@@ -59,5 +58,5 @@ module.exports = withTM({
   env: {
     GENERATE_SOURCEMAP: process.env.GENERATE_SOURCEMAP || 'false',
   },
-  assetPrefix: '.',
+  assetPrefix: '',
 });
