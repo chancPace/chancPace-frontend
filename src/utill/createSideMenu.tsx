@@ -44,23 +44,23 @@ const SideBar = () => {
     },
     {
       key: '/reservation',
-      label: '예약조회',
+      label: '예약 관리',
     },
     {
       key: '/review',
-      label: '리뷰조회',
+      label: '리뷰 관리',
     },
     {
       key: '/sales',
-      label: '매출조회',
+      label: '매출 관리',
       children: [
         {
           key: '/sales/day',
-          label: '일별 조회',
+          label: '일별 매출 조회',
         },
         {
           key: '/sales/month',
-          label: '월별 조회',
+          label: '월별 매출 조회',
         },
       ],
     },
