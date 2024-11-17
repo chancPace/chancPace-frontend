@@ -1,14 +1,17 @@
 import styled from 'styled-components';
 
 const SpaceDetailStyled = styled.div`
-  p {
-    font-size: ${({ theme }) => theme.fontSizes.xl};
-  }
-  .buttonWrap {
+  .top {
     display: flex;
-    justify-content: right;
+    justify-content: space-between;
     margin-bottom: ${({ theme }) => theme.spacing.md};
-    gap: 15px;
+    p {
+      font-size: ${({ theme }) => theme.fontSizes.xl};
+    }
+    .buttonWrap {
+      display: flex;
+      gap: 15px;
+    }
   }
 `;
 

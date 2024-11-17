@@ -141,60 +141,62 @@ const SpaceDetailPage = () => {
 
   return (
     <SpaceDetailStyled>
-      <p>공간 상세 정보</p>
-      <div className="buttonWrap">
-        <div>
-          <Button
-            htmlType="submit"
-            onClick={() => {
-              router.push({
-                pathname: '/registration',
-                query: { spaceId },
-              });
-            }}
-          >
-            수정
-          </Button>
-        </div>
-        <div>
-          <Button
-            className="delete"
-            onClick={() => {
-              Modal.confirm({
-                title: data?.isOpen === true ? '공간을 중단하시겠습니까?' : '공간을 재오픈하시겠습니까?',
-                okText: '확인',
-                cancelText: '취소',
-                onOk: async () => {
-                  message.info(data?.isOpen === true ? '중단되었습니다.' : '재오픈되었습니다.');
-                  const updatedData = { spaceId, isOpen: !data?.isOpen };
-                  await stopSpace(updatedData);
-                  router.push('/myspace');
-                },
-              });
-            }}
-          >
-            {data?.isOpen === true ? '미운영' : '운영'}
-          </Button>
-        </div>
-        <div>
-          <Button
-            htmlType="submit"
-            onClick={() => {
-              Modal.confirm({
-                title: '공간을 삭제하시겠습니까?',
-                okText: '확인',
-                cancelText: '취소',
-                onOk: async () => {
-                  message.info('삭제되었습니다.');
-                  const updatedData = { spaceId, isDelete: true };
-                  await deleteSpace(updatedData);
-                  router.push('/myspace');
-                },
-              });
-            }}
-          >
-            삭제
-          </Button>
+      <div className="top">
+        <p>공간 상세 정보</p>
+        <div className="buttonWrap">
+          <div>
+            <Button
+              htmlType="submit"
+              onClick={() => {
+                router.push({
+                  pathname: '/registration',
+                  query: { spaceId },
+                });
+              }}
+            >
+              수정
+            </Button>
+          </div>
+          <div>
+            <Button
+              className="delete"
+              onClick={() => {
+                Modal.confirm({
+                  title: data?.isOpen === true ? '공간을 중단하시겠습니까?' : '공간을 재오픈하시겠습니까?',
+                  okText: '확인',
+                  cancelText: '취소',
+                  onOk: async () => {
+                    message.info(data?.isOpen === true ? '중단되었습니다.' : '재오픈되었습니다.');
+                    const updatedData = { spaceId, isOpen: !data?.isOpen };
+                    await stopSpace(updatedData);
+                    router.push('/myspace');
+                  },
+                });
+              }}
+            >
+              {data?.isOpen === true ? '미운영' : '운영'}
+            </Button>
+          </div>
+          <div>
+            <Button
+              htmlType="submit"
+              onClick={() => {
+                Modal.confirm({
+                  title: '공간을 삭제하시겠습니까?',
+                  okText: '확인',
+                  cancelText: '취소',
+                  onOk: async () => {
+                    message.info('삭제되었습니다.');
+                    const updatedData = { spaceId, isDelete: true };
+                    await deleteSpace(updatedData);
+                    router.push('/myspace');
+                  },
+                });
+              }}
+            >
+              삭제
+            </Button>
+          </div>
         </div>
       </div>
       <Descriptions bordered items={items} />

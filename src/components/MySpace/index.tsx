@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { MySpaceStyled } from './styled';
-import { Button, Space, Table } from 'antd';
+import { Button, Space, Table, Tag } from 'antd';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/utill/redux/store';
 import { useRouter } from 'next/router';
 import { getMySpace } from '@/pages/api/spaceApi';
 import { SpaceType } from '@/types';
 import Link from 'next/link';
+import dayjs from 'dayjs';
 const { Column } = Table;
 
 const MySpace = () => {
@@ -47,7 +48,8 @@ const MySpace = () => {
           title="등록일"
           dataIndex="createdAt"
           key="createdAt"
-          render={(createdAt: string) => new Date(createdAt).toLocaleDateString()}
+          render={(data: any) => dayjs(data).format('YYYY-MM-DD')}
+          sorter={(a?: any, b?: any) => dayjs(a.createdAt).valueOf() - dayjs(b.createdAt).valueOf()}
         />
         <Column title="주소" dataIndex="spaceLocation" key="spaceLocation" />
         <Column
@@ -59,22 +61,42 @@ const MySpace = () => {
           }}
         />
         <Column
-          title="금액/시간당"
+          title="금액 / 시간당"
           dataIndex="spacePrice"
           key="spacePrice"
           render={(price: number) => `${price.toLocaleString()}원`}
+          sorter={(a?: any, b?: any) => dayjs(a.spacePrice).valueOf() - dayjs(b.spacePrice).valueOf()}
         />
         <Column
-          title="할인금액/시간당"
+          title="할인금액 / 시간당"
           dataIndex="discount"
           key="discount"
           render={(discount: number) => `${discount.toLocaleString()}원`}
+          sorter={(a?: any, b?: any) => dayjs(a.discount).valueOf() - dayjs(b.discount).valueOf()}
         />
         <Column
-          title="상태"
+          title="승인 상태"
           dataIndex="spaceStatus"
           key="spaceStatus"
-          render={(spaceStatus: string) => (spaceStatus === 'AVAILABLE' ? '승인 완료' : '승인 미완료')}
+          render={(spaceStatus: string) =>
+            spaceStatus === 'AVAILABLE' ? <Tag color="blue">승인</Tag> : <Tag color="red">승인 대기</Tag>
+          }
+          filters={[
+            { text: '완료', value: 'AVAILABLE' },
+            { text: '승인 대기', value: 'UNAVAILABLE' },
+          ]}
+          onFilter={(value: any, record: any) => record.spaceStatus === value}
+        />
+        <Column
+          title="운영 / 미운영"
+          dataIndex="isOpen"
+          key="isOpen"
+          render={(isOpen: boolean) => (isOpen ? <Tag color="blue">운영중</Tag> : <Tag color="red">미운영</Tag>)}
+          filters={[
+            { text: '운영', value: true },
+            { text: '미운영', value: false },
+          ]}
+          onFilter={(value: any, record: any) => record.isOpen === value}
         />
         <Column
           title="상페 페이지"
