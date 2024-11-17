@@ -4,7 +4,7 @@ export const ReservationDetailsStyled = styled.div`
   .top {
     display: flex;
     justify-content: space-between;
-    margin: ${({ theme }) => theme.spacing.md} 0;
+    margin-bottom: ${({ theme }) => theme.spacing.md};
   }
   p {
     font-size: ${({ theme }) => theme.fontSizes.xl};

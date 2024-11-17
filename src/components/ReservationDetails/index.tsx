@@ -1,6 +1,6 @@
-import { getOnePayment } from '@/pages/api/paymentApi';
+import { getOnePayment, Refund } from '@/pages/api/paymentApi';
 import { ReservationDetailsStyled } from './styled';
-import { Button, Descriptions, Input, message, Modal } from 'antd';
+import { Button, Descriptions, Input, message, Modal, Tag } from 'antd';
 import type { DescriptionsProps, RadioChangeEvent } from 'antd';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -17,13 +17,15 @@ interface ReservationDetailsProps {
   suppliedPrice?: number;
   vat?: number;
   paymentKey?: string;
+  isBooking?: string;
 }
 const reservationdetails = () => {
   const router = useRouter();
   const { id } = router.query;
   const [details, setDetails] = useState<ReservationDetailsProps | null>(null);
-  const [isModalVisible, setIsModalVisible] = useState(false); // 모달 표시 상태
-  const [cancelReason, setCancelReason] = useState(''); // 취소 이유 상태
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [cancelReason, setCancelReason] = useState('');
+
   useEffect(() => {
     const fetchDetails = async () => {
       if (id) {
@@ -35,6 +37,7 @@ const reservationdetails = () => {
             userName: response.data.user.userName,
             userEmail: response.data.user.email,
             date: response.data.booking.startDate,
+            isBooking: response.data.booking.bookingStatus,
             time: `${response.data.booking.startTime}:00 - ${response.data.booking.endTime}:00`,
             paymentMethod: response.data.paymentMethod,
             cardNumber: response.data.cardNumber,
@@ -42,7 +45,7 @@ const reservationdetails = () => {
             payDate,
             suppliedPrice: response.data.suppliedPrice,
             vat: response.data.vat,
-            paymentKey: response.data.paymentKey, // 추가: paymentKey 필드
+            paymentKey: response.data.paymentKey,
           });
         } catch (error) {
           console.error('결제 상세 정보 불러오기 실패:', error);
@@ -62,18 +65,36 @@ const reservationdetails = () => {
     setCancelReason('');
   };
 
-  const handleConfirmCancel = () => {
-    message.info('개발 중입니다');
-    handleCancel(); // 모달 닫기
+  // const handleConfirmCancel = () => {
+  //   message.info('개발 중입니다');
+  //   handleCancel();
+  // };
+
+  const handleConfirmCancel = async () => {
+    try {
+      const bookingId = id;
+      const cancelReason = '고객 요청에 따른 취소';
+      await Refund(Number(bookingId), cancelReason);
+      message.success('예약이 취소되었습니다');
+      setIsModalVisible(false);
+      router.push('/reservation');
+    } catch (error) {
+      message.error('예약 취소 실패');
+      console.error('예약취소실패', error);
+    }
   };
 
   return (
     <ReservationDetailsStyled>
       <div className="top">
         <p>예약 상세조회</p>
-        <div className="btn-box">
-          <Button onClick={showCancelModal}>취소</Button>
-        </div>
+        {details?.isBooking === 'COMPLETED' ? (
+          <div className="btn-box">
+            <Button onClick={showCancelModal}>취소</Button>
+          </div>
+        ) : (
+          <></>
+        )}
       </div>
       <Descriptions bordered>
         <Descriptions.Item label="예약자">{details?.userName}</Descriptions.Item>
@@ -81,6 +102,9 @@ const reservationdetails = () => {
         <Descriptions.Item label="공간 이름">{details?.spaceName}</Descriptions.Item>
         <Descriptions.Item label="예약 일자">{details?.date}</Descriptions.Item>
         <Descriptions.Item label="예약 시간">{details?.time}</Descriptions.Item>
+        <Descriptions.Item label="예약 상태">
+          {details?.isBooking === 'COMPLETED' ? <Tag color="blue">예약 완료</Tag> : <Tag color="red">예약 취소</Tag>}
+        </Descriptions.Item>
         <Descriptions.Item label="결제 방법">{details?.paymentMethod}</Descriptions.Item>
         <Descriptions.Item label="카드">
           {details?.cardNumber === 'UNKNOWN' ? '-' : details?.cardNumber}
@@ -92,7 +116,7 @@ const reservationdetails = () => {
       </Descriptions>
 
       <Modal
-        title="결제 취소"
+        title="예약 취소"
         visible={isModalVisible}
         onOk={handleConfirmCancel}
         onCancel={handleCancel}
