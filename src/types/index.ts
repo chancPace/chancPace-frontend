@@ -1,5 +1,3 @@
-import exp from 'constants';
-
 export interface Category {
   id: number;
   categoryName: string;
@@ -32,34 +30,6 @@ export interface SpaceType {
   businessEndTime: number;
   spaceAdminName: string;
   spaceAdminPhoneNumber: string;
-  // images?: {
-  //   imageUrl: string;
-  // }[];
-  // reviews?: {
-  //   user?: {
-  //     userName: string;
-  //   };
-  //   reviewComment: string;
-  //   reviewRating: number;
-  //   createdAt: string;
-  //   reviewStatus: string;
-  //   updatedAt: string;
-  //   id: number;
-  // }[];
-  // bookings?: {
-  //   startDate: string;
-  //   startTime: string;
-  //   endTime: string;
-  //   bookingStatus: string;
-  //   user?: {
-  //     userName: string;
-  //     phoneNumber: string;
-  //     payments?: {
-  //       paymentAmount: string;
-  //       id: number;
-  //     };
-  //   };
-  // };
   images?: Image[];
   reviews?: Review[];
   bookings?: Booking[];
