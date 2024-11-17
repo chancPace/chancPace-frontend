@@ -1,7 +1,7 @@
-import SalesDay from '@/components/SalesDay';
+import SalesDayPage from '@/components/SalesDayPage';
 
-const sales = () => {
-  return <SalesDay />;
+const SalesDay = () => {
+  return <SalesDayPage />;
 };
 
-export default sales;
+export default SalesDay;

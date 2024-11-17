@@ -33,9 +33,11 @@ const SalesDetail = () => {
           <Descriptions.Item label="공간명">{details.booking?.space?.spaceName}</Descriptions.Item>
           <Descriptions.Item label="예약자">{details.user?.userName}</Descriptions.Item>
           <Descriptions.Item label="고객 연락처">{details.user?.phoneNumber}</Descriptions.Item>
-          <Descriptions.Item label="고객 결제 금액">{details.paymentPrice.toLocaleString() + '원'}</Descriptions.Item>
-          <Descriptions.Item label="쿠폰 사용금액">{details.couponPrice?.toLocaleString() + '원'}</Descriptions.Item>
           <Descriptions.Item label="매출액">{totalAmount.toLocaleString() + '원'}</Descriptions.Item>
+          <Descriptions.Item label="결제 금액">{details.paymentPrice.toLocaleString() + '원'}</Descriptions.Item>
+          <Descriptions.Item label="쿠폰 사용금액">
+            {details.couponPrice == 0 ? '-' : details?.couponPrice?.toLocaleString() + '원'}
+          </Descriptions.Item>
           <Descriptions.Item label="수수료">{feeAmount.toLocaleString() + '원'}</Descriptions.Item>
           <Descriptions.Item label="정산예정액">{settlementAmount.toLocaleString() + '원'}</Descriptions.Item>
         </Descriptions>

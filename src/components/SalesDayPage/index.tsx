@@ -9,7 +9,7 @@ import { Booking, DataType, Payment, SpaceType } from '@/types';
 import ChartDay from '../ChartDay';
 import SalesTable from '../SalesTable';
 
-const SalesDay = () => {
+const SalesDayPage = () => {
   const [data, setData] = useState<DataType[]>([]);
   const [filteredData, setFilteredData] = useState<DataType[]>([]);
   const userId = useSelector((state: RootState) => state.user.userInfo?.id);
@@ -20,24 +20,30 @@ const SalesDay = () => {
           const response = await getMySpace(userId);
           const transformedData = response.data
             .map((space: SpaceType) => {
-              return space.bookings?.map((booking: Booking) => {
-                const user = booking.user;
-                const payment = user?.payments.find((p: Payment) => p.id === booking.paymentId);
-                const paymentAmount = payment ? payment.paymentPrice : 0;
-                const couponAmount = payment ? payment.couponPrice : 0;
-                const totalAmount = paymentAmount + couponAmount;
-                const feeAmount = totalAmount * 0.05;
-                const settlementAmount = totalAmount - feeAmount;
-                return {
-                  key: booking.id,
-                  paymentId: booking.paymentId,
-                  date: booking.createdAt,
-                  spaceName: space.spaceName,
-                  totalAmount,
-                  feeAmount,
-                  settlementAmount,
-                };
-              });
+              return space.bookings
+                ?.map((booking: Booking) => {
+                  if (booking.bookingStatus !== 'CANCELLED') {
+                    const user = booking.user;
+                    const payment = user?.payments.find((p: Payment) => p.id === booking.paymentId);
+                    const paymentAmount = payment ? payment.paymentPrice : 0;
+                    const couponAmount = payment ? payment.couponPrice : 0;
+                    const totalAmount = paymentAmount + couponAmount;
+                    const feeAmount = totalAmount * 0.05;
+                    const settlementAmount = totalAmount - feeAmount;
+                    return {
+                      key: booking.id,
+                      paymentId: booking.paymentId,
+                      date: booking.createdAt,
+                      spaceName: space.spaceName,
+                      totalAmount,
+                      feeAmount,
+                      settlementAmount,
+                    };
+                  } else {
+                    return null;
+                  }
+                })
+                .filter((booking: any) => booking !== null);
             })
             .flat();
 
@@ -60,4 +66,4 @@ const SalesDay = () => {
   );
 };
 
-export default SalesDay;
+export default SalesDayPage;

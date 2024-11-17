@@ -1,7 +1,7 @@
-import SalesMonth from '@/components/SalesMonth';
+import SalesMonthPage from '@/components/SalesMonthPage';
 
-const sales = () => {
-  return <SalesMonth />;
+const SalesMonth = () => {
+  return <SalesMonthPage />;
 };
 
-export default sales;
+export default SalesMonth;

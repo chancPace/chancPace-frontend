@@ -12,59 +12,74 @@ import { Booking, DataType, Payment, SpaceType } from '@/types';
 const MainPage = () => {
   const userId = useSelector((state: RootState) => state.user.userInfo?.id);
   const [filteredData, setFilteredData] = useState<DataType[]>([]);
-  const [todayBooking, setTodayBooking] = useState();
-  const [todayPayment, setTodayPayment] = useState();
-  const [todayReview, setTodayReview] = useState();
+  const [todayBooking, setTodayBooking] = useState(0);
+  const [todayPayment, setTodayPayment] = useState(0);
+  const [todayReview, setTodayReview] = useState(0);
   const router = useRouter();
 
-  const fetchData = async () => {
-    if (userId) {
-      const mySpace = await getMySpace(userId);
-      const transformedData = mySpace.data
-        .map((space: SpaceType) => {
-          return space.bookings?.map((booking: Booking) => {
-            const user = booking.user;
-            const payment = user?.payments.find((p: Payment) => p.id === booking.paymentId);
-            const paymentAmount = payment ? payment.paymentPrice : 0;
-            const couponAmount = payment ? payment.couponPrice : 0;
-            const totalAmount = paymentAmount + couponAmount;
-            const feeAmount = totalAmount * 0.05;
-            const settlementAmount = totalAmount - feeAmount;
-            return {
-              key: booking.id,
-              paymentId: booking.paymentId,
-              date: booking.createdAt,
-              spaceName: space.spaceName,
-              totalAmount,
-              feeAmount,
-              settlementAmount,
-            };
-          });
-        })
-        .flat();
-      setFilteredData(transformedData);
-
-      const bookings = mySpace.data.filter((x: any) => x.bookings.length !== 0);
-      const todayUse = bookings.map((x: any) =>
-        x.bookings.filter((x: any) => x.startDate === dayjs().format('YYYY-MM-DD'))
-      );
-      const todayPay = bookings.map((x: any) =>
-        x.bookings.filter((x: any) => dayjs(x.createdAt).format('YYYY-MM-DD') === dayjs().format('YYYY-MM-DD'))
-      );
-      const todayReview = bookings.map((x: any) =>
-        x.reviews.filter((x: any) => dayjs(x.createdAt).format('YYYY-MM-DD') === dayjs().format('YYYY-MM-DD'))
-      );
-      const todayUseCount = todayUse.filter((x: any) => x.length !== 0);
-      const todayPayCount = todayPay.filter((x: any) => x.length !== 0);
-      const todayReviewCount = todayReview.filter((x: any) => x.length !== 0);
-      setTodayBooking(todayUseCount.length);
-      setTodayPayment(todayPayCount.length);
-      setTodayReview(todayReviewCount.length);
-    }
-  };
   useEffect(() => {
+    const fetchData = async () => {
+      if (userId) {
+        try {
+          const mySpace = await getMySpace(userId);
+          const notcancel = mySpace?.data
+            ?.filter((space: SpaceType) => space?.bookings?.length !== 0)
+            ?.map((space: SpaceType) => {
+              const validBookings = space?.bookings?.filter(
+                (booking: Booking) => booking.bookingStatus !== 'CANCELLED'
+              );
+              return { ...space, bookings: validBookings };
+            });
+
+          const transformedData = notcancel
+            .map((space: SpaceType) => {
+              return space?.bookings?.map((booking: Booking) => {
+                const user = booking?.user;
+                const payment = user?.payments?.find((p: Payment) => p.id === booking.paymentId);
+                const paymentAmount = payment ? payment?.paymentPrice : 0;
+                const couponAmount = payment ? payment?.couponPrice : 0;
+                const totalAmount = paymentAmount + couponAmount;
+                const feeAmount = totalAmount * 0.05;
+                const settlementAmount = totalAmount - feeAmount;
+
+                return {
+                  key: booking.id,
+                  paymentId: booking.paymentId,
+                  date: booking.createdAt,
+                  spaceName: space.spaceName,
+                  totalAmount,
+                  feeAmount,
+                  settlementAmount,
+                };
+              });
+            })
+            .flat();
+          setFilteredData(transformedData);
+
+          const todayUse = notcancel.map((x: any) =>
+            x.bookings.filter((x: any) => x.startDate === dayjs().format('YYYY-MM-DD'))
+          );
+          const todayPay = notcancel.map((x: any) =>
+            x.bookings.filter((x: any) => dayjs(x.createdAt).format('YYYY-MM-DD') === dayjs().format('YYYY-MM-DD'))
+          );
+          const todayReview = notcancel.map((x: any) =>
+            x.reviews.filter((x: any) => dayjs(x.createdAt).format('YYYY-MM-DD') === dayjs().format('YYYY-MM-DD'))
+          );
+
+          const todayUseCount = todayUse.filter((x: any) => x.length !== 0);
+          const todayPayCount = todayPay.filter((x: any) => x.length !== 0);
+          const todayReviewCount = todayReview.filter((x: any) => x.length !== 0);
+
+          setTodayBooking(todayUseCount.length);
+          setTodayPayment(todayPayCount.length);
+          setTodayReview(todayReviewCount.length);
+        } catch (error) {
+          console.error('공간을 불러오지 못했습니다.', error);
+        }
+      }
+    };
     fetchData();
-  }, []);
+  }, [userId]);
 
   return (
     <MainStyled>
