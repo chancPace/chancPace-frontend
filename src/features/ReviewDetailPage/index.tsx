@@ -51,7 +51,7 @@ const ReviewDetailPage = () => {
     {
       key: '5',
       label: '별점',
-      children: data?.reviewRating,
+      children: <Rate disabled value={data?.reviewRating} />,
     },
     {
       key: '6',
