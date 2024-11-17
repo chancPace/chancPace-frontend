@@ -38,3 +38,16 @@ export const getOnePayment = async (paymentId: number) => {
     throw error;
   }
 };
+
+export const Refund = async (bookingId: number, cancelReason: string) => {
+  try {
+    const response = await axios.post(`${API_URL}refund`, {
+      bookingId,
+      cancelReason,
+    });
+    return response.data;
+  } catch (error) {
+    console.error('취소실패', error);
+    throw error;
+  }
+};
