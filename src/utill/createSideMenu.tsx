@@ -55,12 +55,12 @@ const SideBar = () => {
       label: '매출 관리',
       children: [
         {
-          key: '/sales/day',
-          label: '일별 매출 조회',
+          key: '/sales/month',
+          label: '연도별 월 매출 조회',
         },
         {
-          key: '/sales/month',
-          label: '월별 매출 조회',
+          key: '/sales/day',
+          label: '월별 일 매출 조회',
         },
       ],
     },
