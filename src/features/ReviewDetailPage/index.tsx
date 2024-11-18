@@ -12,7 +12,7 @@ const ReviewDetailPage = () => {
   const reviewId = Number(id);
   const [data, setData] = useState<any>();
 
-  const fetchRevieData = async () => {
+  const fetchReviewData = async () => {
     if (reviewId) {
       try {
         const response = await getOneReview(reviewId);
@@ -25,7 +25,7 @@ const ReviewDetailPage = () => {
   };
 
   useEffect(() => {
-    fetchRevieData();
+    fetchReviewData();
   }, [reviewId]);
 
   //삭제버튼 클릭시 삭제 확인하는 모달 창 띄우기

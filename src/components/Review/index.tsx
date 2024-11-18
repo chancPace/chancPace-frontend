@@ -11,9 +11,7 @@ import router from 'next/router';
 const ReviewListPage = () => {
   const userId = useSelector((state: RootState) => state.user.userInfo?.id);
   const [reviews, setReviews] = useState<any>([]);
-  console.log('🚀 ~ ReviewListPage ~ reviews:', reviews);
   const [tableData, setTableData] = useState<any[]>([]);
-  console.log('🚀 ~ ReviewListPage ~ tableData:', tableData);
   useEffect(() => {
     const fetchReview = async () => {
       if (userId) {

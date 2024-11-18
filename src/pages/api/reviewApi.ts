@@ -13,7 +13,7 @@ export const updateReview = async (reviewId: number, reviewData: Partial<Review>
   try {
     const response = await axios.patch(`${API_URL}update-review`, {
       reviewId,
-      ...reviewData, // 필요한 데이터만 전송
+      ...reviewData,
     });
     return response.data;
   } catch (error) {

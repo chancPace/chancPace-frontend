@@ -65,11 +65,6 @@ const reservationdetails = () => {
     setCancelReason('');
   };
 
-  // const handleConfirmCancel = () => {
-  //   message.info('개발 중입니다');
-  //   handleCancel();
-  // };
-
   const handleConfirmCancel = async () => {
     try {
       const bookingId = id;
