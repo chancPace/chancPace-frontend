@@ -2,7 +2,17 @@ import { RegistrationStyled } from './styled';
 import React, { useEffect, useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import { Category } from '../../types';
-import { Form, Input, Button, Select, InputNumber, Switch, Upload, UploadFile, message } from 'antd';
+import {
+  Form,
+  Input,
+  Button,
+  Select,
+  InputNumber,
+  Switch,
+  Upload,
+  UploadFile,
+  message,
+} from 'antd';
 import { addNewSpace, getOneSpace, updateSpace } from '@/pages/api/spaceApi';
 const { TextArea } = Input;
 import { getCategories } from '@/pages/api/categoryApi';
@@ -137,9 +147,32 @@ const Registration = () => {
     }
   };
 
+  // 기존 이미지 불러오는 로직 수정
+  const fetchFileFromUrl = async (url: string): Promise<UploadFile<any>> => {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const blob = await response.blob();
+      const fileName = url.split('/').pop() || 'image.jpg';
+      const file = new File([blob], fileName, { type: blob.type });
+
+      return {
+        uid: url,
+        name: fileName,
+        status: 'done',
+        url: url,
+        originFileObj: file, 
+      } as UploadFile<any>;
+    } catch (error) {
+      console.error('Failed to fetch file:', error);
+      throw error;
+    }
+  };
+
   //수정 해당 공간의 데이터 불러오기
   useEffect(() => {
-    // 수정할 공간의 데이터 불러오기
     const fetchSpaceData = async () => {
       if (spaceId) {
         try {
@@ -147,17 +180,14 @@ const Registration = () => {
           const response = await getOneSpace(id);
           const spaceData = response.data;
           // 기존 이미지가 있는 경우 fileList에 추가
-          const existingFiles =
-            spaceData.images?.map((image: { imageUrl: string }) => ({
-              url: decodeUrl(image.imageUrl) || '', // 이미지 URL이 없을 경우 빈 문자열로 처리
-              status: 'done', // 업로드된 이미지로 간주
-            })) || [];
-
+          const existingFiles = await Promise.all(
+            spaceData.images?.map(async (image: { imageUrl: string }) => {
+              return fetchFileFromUrl(image.imageUrl);
+            }) || []
+          );
           form.setFieldsValue({
-            ...form.getFieldsValue(), // 기존 폼의 값들
-            ...spaceData, // 서버에서 가져온 데이터로 덮어쓰기
-            spaceStatus: spaceData.spaceStatus || 'UNAVAILABLE',
-            spaceLocation: addValue || '',
+            ...spaceData,
+            spaceLocation: spaceData.spaceLocation,
           });
 
           setAddValue(spaceData.spaceLocation);
@@ -170,6 +200,10 @@ const Registration = () => {
     };
     fetchSpaceData();
   }, [spaceId, form]);
+
+  const handleRemove = (file: UploadFile) => {
+    setFileList((prevList) => prevList.filter((item) => item.uid !== file.uid));
+  };
 
   return (
     <RegistrationStyled>
@@ -228,14 +262,23 @@ const Registration = () => {
           <KakaoMapAddress
             addValue={addValue}
             setAddValue={setAddValue}
-            onSelectAddress={(address) => form.setFieldsValue({ spaceLocation: address })}
+            onSelectAddress={(address) =>
+              form.setFieldsValue({ spaceLocation: address })
+            }
           />
         </Form.Item>
         <Form.Item label="상세주소" name="spaceLocationDetail">
           <Input placeholder="상세주소를 입력해 주세요" />
         </Form.Item>
-        <Form.Item label="카테고리" name="categoryId" rules={[{ required: true, message: '카테고리를 선택해주세요' }]}>
-          <Select placeholder="카테고리를 선택해 주세요" options={categoryOptions} />
+        <Form.Item
+          label="카테고리"
+          name="categoryId"
+          rules={[{ required: true, message: '카테고리를 선택해주세요' }]}
+        >
+          <Select
+            placeholder="카테고리를 선택해 주세요"
+            options={categoryOptions}
+          />
         </Form.Item>
         <Form.Item
           label="공간 소개"
@@ -286,7 +329,12 @@ const Registration = () => {
             },
           ]}
         >
-          <TextArea rows={2} name="amenities" className="custom-textarea" placeholder="시설 안내를 작성해 주세요" />
+          <TextArea
+            rows={2}
+            name="amenities"
+            className="custom-textarea"
+            placeholder="시설 안내를 작성해 주세요"
+          />
         </Form.Item>
         <Form.Item name="spaceStatus" hidden initialValue="UNAVAILABLE">
           <Input />
@@ -301,7 +349,12 @@ const Registration = () => {
             },
           ]}
         >
-          <TextArea rows={2} name="caution" className="custom-textarea" placeholder="예약시 주의사항을 작성해 주세요" />
+          <TextArea
+            rows={2}
+            name="caution"
+            className="custom-textarea"
+            placeholder="예약시 주의사항을 작성해 주세요"
+          />
         </Form.Item>
         <Form.Item
           label="청소시간"
@@ -351,7 +404,9 @@ const Registration = () => {
                 if (minGuests === undefined || value >= minGuests) {
                   return Promise.resolve();
                 }
-                return Promise.reject(new Error('최대 인원은 최소 인원보다 크거나 같아야 합니다.'));
+                return Promise.reject(
+                  new Error('최대 인원은 최소 인원보다 크거나 같아야 합니다.')
+                );
               },
             }),
           ]}
@@ -361,7 +416,9 @@ const Registration = () => {
         <Form.Item
           label="영업 시작 시간"
           name="businessStartTime"
-          rules={[{ required: true, message: '영업 시작 시간을 선택해 주세요' }]}
+          rules={[
+            { required: true, message: '영업 시작 시간을 선택해 주세요' },
+          ]}
         >
           <Select
             allowClear
@@ -376,7 +433,9 @@ const Registration = () => {
         <Form.Item
           label="영업 종료 시간"
           name="businessEndTime"
-          rules={[{ required: true, message: '영업 종료 시간을 선택해 주세요' }]}
+          rules={[
+            { required: true, message: '영업 종료 시간을 선택해 주세요' },
+          ]}
         >
           <Select
             allowClear
@@ -407,7 +466,9 @@ const Registration = () => {
               showPreviewIcon: false,
               showRemoveIcon: true,
             }}
-            itemRender={(originNode) => React.cloneElement(originNode, { title: null })}
+            itemRender={(originNode) =>
+              React.cloneElement(originNode, { title: null })
+            }
           >
             {fileList.length >= 8 ? null : (
               <div>
@@ -427,7 +488,9 @@ const Registration = () => {
         <Form.Item
           label="관리자 전화번호"
           name="spaceAdminPhoneNumber"
-          rules={[{ required: true, message: '전화번호를 입력해주세요(-포함)' }]}
+          rules={[
+            { required: true, message: '전화번호를 입력해주세요(-포함)' },
+          ]}
         >
           <Input placeholder="공간 관리자 연락처를 작성해 주세요" />
         </Form.Item>
