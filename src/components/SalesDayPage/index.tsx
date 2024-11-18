@@ -26,7 +26,7 @@ const SalesDayPage = () => {
                   const paymentAmount = payment ? payment.paymentPrice : 0;
                   const couponAmount = payment ? payment.couponPrice : 0;
                   const totalAmount = paymentAmount + couponAmount;
-                  const feeAmount = totalAmount * 0.05;
+                  const feeAmount = paymentAmount * 0.05;
                   const settlementAmount = totalAmount - feeAmount;
                   return {
                     key: booking.id,
@@ -55,7 +55,7 @@ const SalesDayPage = () => {
                     const paymentAmount = payment ? payment.paymentPrice : 0;
                     const couponAmount = payment ? payment.couponPrice : 0;
                     const totalAmount = paymentAmount + couponAmount;
-                    const feeAmount = totalAmount * 0.05;
+                    const feeAmount = paymentAmount * 0.05;
                     const settlementAmount = totalAmount - feeAmount;
                     return {
                       key: booking.id,

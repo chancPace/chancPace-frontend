@@ -22,7 +22,7 @@ const SalesDetail = () => {
     fetchDetail();
   }, [id]);
   const totalAmount = details ? details.paymentPrice + (details.couponPrice ?? 0) : 0;
-  const feeAmount = totalAmount * 0.05;
+  const feeAmount = details ? details.paymentPrice * 0.05 : 0;
   const settlementAmount = totalAmount - feeAmount;
 
   return (
