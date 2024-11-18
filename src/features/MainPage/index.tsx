@@ -5,9 +5,13 @@ import { MainStyled } from './style';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/utill/redux/store';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
 import { getMySpace } from '@/pages/api/spaceApi';
 import ChartDay from '@/components/ChartDay';
 import { Booking, DataType, Payment, SpaceType } from '@/types';
+dayjs.extend(utc); // UTC 플러그인 확장
+dayjs.extend(timezone); // timezone 플러그인 사용
 
 const MainPage = () => {
   const userId = useSelector((state: RootState) => state.user.userInfo?.id);
@@ -57,13 +61,25 @@ const MainPage = () => {
           setFilteredData(transformedData);
 
           const todayUse = notcancel.map((x: any) =>
-            x.bookings.filter((x: any) => x.startDate === dayjs().format('YYYY-MM-DD'))
+            x.bookings.filter(
+              (x: any) =>
+                dayjs(x.startDate).tz('Asia/Seoul').format('YYYY-MM-DD') ===
+                dayjs().tz('Asia/Seoul').format('YYYY-MM-DD')
+            )
           );
           const todayPay = notcancel.map((x: any) =>
-            x.bookings.filter((x: any) => dayjs(x.createdAt).format('YYYY-MM-DD') === dayjs().format('YYYY-MM-DD'))
+            x.bookings.filter(
+              (x: any) =>
+                dayjs(x.createdAt).tz('Asia/Seoul').format('YYYY-MM-DD') ===
+                dayjs().tz('Asia/Seoul').format('YYYY-MM-DD')
+            )
           );
           const todayReview = notcancel.map((x: any) =>
-            x.reviews.filter((x: any) => dayjs(x.createdAt).format('YYYY-MM-DD') === dayjs().format('YYYY-MM-DD'))
+            x.reviews.filter(
+              (x: any) =>
+                dayjs(x.createdAt).tz('Asia/Seoul').format('YYYY-MM-DD') ===
+                dayjs().tz('Asia/Seoul').format('YYYY-MM-DD')
+            )
           );
 
           const todayUseCount = todayUse.filter((x: any) => x.length !== 0);
@@ -91,7 +107,7 @@ const MainPage = () => {
             <span>{todayBooking} 건</span>
           </div>
         </div>
-        <div className="content" onClick={() => router.push('/sales')}>
+        <div className="content" onClick={() => router.push('/sales/day')}>
           <p className="title">금일 결제 건수</p>
           <div className="bottom">
             <CreditCardOutlined className="icon" />
