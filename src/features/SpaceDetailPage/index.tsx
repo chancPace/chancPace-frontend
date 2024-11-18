@@ -188,7 +188,9 @@ const SpaceDetailPage = () => {
                   onOk: async () => {
                     message.info('삭제되었습니다.');
                     const updatedData = { spaceId, isDelete: true };
+                    const stopData = { spaceId, isOpen: !data?.isOpen };
                     await deleteSpace(updatedData);
+                    await stopSpace(stopData);
                     router.push('/myspace');
                   },
                 });
