@@ -7,7 +7,7 @@ import { postLogin } from '@/pages/api/userApi';
 import { useDispatch } from 'react-redux';
 import { useState } from 'react';
 import { loginSuccess } from '@/utill/redux/slices/userSlice';
-import { AxiosError } from 'axios'; // AxiosError 타입을 import
+import { AxiosError } from 'axios';
 import { LoginData } from '@/types';
 
 const LoginPage = () => {
@@ -37,7 +37,7 @@ const LoginPage = () => {
         router.reload();
       }
     } catch (error) {
-      const axiosError = error as AxiosError; // error를 AxiosError로 캐스팅
+      const axiosError = error as AxiosError;
 
       if (axiosError.response && axiosError.response.status === 404) {
         setEmailError('존재하지 않는 회원입니다.');
@@ -57,8 +57,8 @@ const LoginPage = () => {
         className="form"
         onFinish={handleLogin}
         initialValues={{
-          email: 'test@daum.net', // 기본값으로 설정할 이메일
-          password: 'password1234!', // 기본값으로 설정할 비밀번호
+          email: '',
+          password: '',
         }}
       >
         <div className="formLogo">

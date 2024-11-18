@@ -1,7 +1,7 @@
 import Template from '@/layouts/Template';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useDispatch, UseDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Cookies from 'js-cookie';
 import { logout, setUser } from '@/utill/redux/slices/userSlice';
 import { getUser } from '@/pages/api/userApi';
