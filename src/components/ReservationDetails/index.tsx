@@ -5,6 +5,11 @@ import type { DescriptionsProps, RadioChangeEvent } from 'antd';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+dayjs.extend(utc); // UTC 플러그인 확장
+dayjs.extend(timezone); // timezone 플러그인 사용
+
 interface ReservationDetailsProps {
   spaceName?: string;
   userName?: string;
@@ -20,6 +25,7 @@ interface ReservationDetailsProps {
   paymentKey?: string;
   isBooking?: string;
 }
+
 const reservationdetails = () => {
   const router = useRouter();
   const { id } = router.query;
