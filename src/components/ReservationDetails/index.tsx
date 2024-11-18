@@ -68,7 +68,7 @@ const reservationdetails = () => {
   const handleConfirmCancel = async () => {
     try {
       const bookingId = id;
-      const cancelReason = '고객 요청에 따른 취소';
+      const cancelReason = '호스트 요청에 따른 취소';
       await Refund(Number(bookingId), cancelReason);
       message.success('예약이 취소되었습니다');
       setIsModalVisible(false);

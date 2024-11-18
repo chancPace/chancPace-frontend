@@ -1,5 +1,4 @@
 import axios, { AxiosError } from 'axios';
-import Cookies from 'js-cookie'; // 쿠키 라이브러리 추가
 
 const isLocal = process.env.NODE_ENV === 'development';
 

@@ -22,7 +22,7 @@ interface AddressSearchResult {
   };
 }
 
-const KakaoMap = ({ address }:KakaoMapProps) => {
+const KakaoMap = ({ address }: KakaoMapProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [coordinates, setCoordinates] = useState({
     latitude: 37.5665,
@@ -40,20 +40,17 @@ const KakaoMap = ({ address }:KakaoMapProps) => {
 
     //해당 주소를 기반으로 (latitude, longitude)를 반환
     //좌표값은 setCoordinates로 상태를 업데이트하여 저장
-    geocoder.addressSearch(
-      address,
-      (result: AddressSearchResult[], status: string) => {
-        if (status === window.kakao.maps.services.Status.OK) {
-          const { y: latitude, x: longitude } = result[0];
-          setCoordinates({
-            latitude: parseFloat(latitude),
-            longitude: parseFloat(longitude),
-          });
-        } else {
-          console.error('주소 변환 실패');
-        }
+    geocoder.addressSearch(address, (result: AddressSearchResult[], status: string) => {
+      if (status === window.kakao.maps.services.Status.OK) {
+        const { y: latitude, x: longitude } = result[0];
+        setCoordinates({
+          latitude: parseFloat(latitude),
+          longitude: parseFloat(longitude),
+        });
+      } else {
+        console.error('주소 변환 실패');
       }
-    );
+    });
   };
 
   //kakao 지도 api 스크립트를 동적으로 로드
@@ -71,7 +68,6 @@ const KakaoMap = ({ address }:KakaoMapProps) => {
       kakaoMapsScript.onload = () => {
         window.kakao.maps.load(() => {
           setIsLoaded(true);
-          // convertAddressToCoordinates();
         });
       };
 
@@ -81,11 +77,6 @@ const KakaoMap = ({ address }:KakaoMapProps) => {
         setIsLoaded(true); // 이미 스크립트가 로드되었으면 바로 로딩 완료
       }
     }
-    // return () => {
-    //   if (existingScript) {
-    //     document.head.removeChild(existingScript);
-    //   }
-    // };
   }, []);
 
   useEffect(() => {
