@@ -64,24 +64,50 @@ const MainPage = () => {
             x.bookings.filter(
               (x: any) =>
                 dayjs(x.startDate).tz('Asia/Seoul').format('YYYY-MM-DD') ===
-                dayjs().tz('Asia/Seoul').format('YYYY-MM-DD')
+                dayjs().tz('Asia/Seoul').format('YYYY-MM-DD'),
+              console.log('🚀 ~ todayUse ~ x:', x),
+              console.log('🚀 ~ todayUse 시작', dayjs(x.startDate).tz('Asia/Seoul').format('YYYY-MM-DD')),
+              console.log('🚀 ~todayUse 끝', dayjs().tz('Asia/Seoul').format('YYYY-MM-DD')),
+              console.log(
+                '🚀 ~ todayUse 비교',
+                dayjs(x.startDate).tz('Asia/Seoul').format('YYYY-MM-DD') ===
+                  dayjs().tz('Asia/Seoul').format('YYYY-MM-DD')
+              )
             )
           );
           const todayPay = notcancel.map((x: any) =>
             x.bookings.filter(
               (x: any) =>
                 dayjs(x.createdAt).tz('Asia/Seoul').format('YYYY-MM-DD') ===
-                dayjs().tz('Asia/Seoul').format('YYYY-MM-DD')
+                dayjs().tz('Asia/Seoul').format('YYYY-MM-DD'),
+              console.log('🚀 ~ todayPay ~ x:', x),
+              console.log('🚀 ~ todayPay 시작', dayjs(x.createdAt).tz('Asia/Seoul').format('YYYY-MM-DD')),
+              console.log('🚀 ~ todayPay 끝', dayjs().tz('Asia/Seoul').format('YYYY-MM-DD')),
+              console.log(
+                '🚀 ~ fetchData ~    dayjs 비교',
+                dayjs(x.createdAt).tz('Asia/Seoul').format('YYYY-MM-DD') ===
+                  dayjs().tz('Asia/Seoul').format('YYYY-MM-DD')
+              )
             )
           );
           const todayReview = notcancel.map((x: any) =>
             x.reviews.filter(
               (x: any) =>
                 dayjs(x.createdAt).tz('Asia/Seoul').format('YYYY-MM-DD') ===
-                dayjs().tz('Asia/Seoul').format('YYYY-MM-DD')
+                dayjs().tz('Asia/Seoul').format('YYYY-MM-DD'),
+              console.log('🚀 ~ todayReview ~ x:', x),
+              console.log('🚀 ~ todayReview 시작', dayjs(x.createdAt).tz('Asia/Seoul').format('YYYY-MM-DD')),
+              console.log('🚀 ~todayReview 끝', dayjs().tz('Asia/Seoul').format('YYYY-MM-DD')),
+              console.log(
+                '🚀 ~ fetchData ~    dayjs todayReview 비교',
+                dayjs(x.createdAt).tz('Asia/Seoul').format('YYYY-MM-DD') ===
+                  dayjs().tz('Asia/Seoul').format('YYYY-MM-DD')
+              )
             )
           );
-
+          console.log('🚀 ~ fetchData ~ todayUse:', todayUse);
+          console.log('🚀 ~ fetchData ~ todayPay:', todayPay);
+          console.log('🚀 ~ fetchData ~ todayReview:', todayReview);
           const todayUseCount = todayUse.filter((x: any) => x.length !== 0);
           const todayPayCount = todayPay.filter((x: any) => x.length !== 0);
           const todayReviewCount = todayReview.filter((x: any) => x.length !== 0);
