@@ -31,7 +31,7 @@ const SpaceDetailPage = () => {
     }
   }, [id]);
 
-  const items = [
+  const items: any = [
     {
       key: '1',
       label: '공간명',
@@ -201,7 +201,7 @@ const SpaceDetailPage = () => {
           </div>
         </div>
       </div>
-      <Descriptions bordered items={items} />
+      {/* <Descriptions bordered items={items} /> */}
     </SpaceDetailStyled>
   );
 };
