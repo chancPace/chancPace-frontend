@@ -1,5 +1,5 @@
 import { DataType } from '@/types';
-import { Table, TableColumnsType } from 'antd';
+import { Table, TableColumnsType, Tag } from 'antd';
 import dayjs from 'dayjs';
 import router from 'next/router';
 import { SalesTableStyled } from './style';
@@ -33,6 +33,17 @@ const SalesTable = ({ filteredData }: { filteredData: any[] }) => {
       dataIndex: 'settlementAmount',
       render: (value) => value?.toLocaleString() + '원',
       sorter: (a: any, b: any) => a.settlementAmount - b.settlementAmount,
+    },
+    {
+      title: '결제 상태',
+      dataIndex: 'bookingStatus',
+      filters: [
+        { text: '결제 완료', value: 'COMPLETED' },
+        { text: '결제 취소', value: 'CANCELLED' },
+      ],
+      onFilter: (value: any, record: any) => record.paymentStatus == value,
+      render: (paymentStatus: string) =>
+        paymentStatus === 'COMPLETED' ? <Tag color="blue">결제 완료</Tag> : <Tag color="red">결제취소</Tag>,
     },
     {
       title: '상세 페이지',

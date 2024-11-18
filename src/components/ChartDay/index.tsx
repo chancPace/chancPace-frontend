@@ -55,8 +55,8 @@ const ChartDay = ({ filteredData }: { filteredData: any[] }) => {
       [date: string]: { totalPaymentPrice: number; count: number; feeAmount: number; settlementAmount: number };
     } = {};
 
-    filteredData.forEach((x: any) => {
-      const date = dayjs(x.date);
+    filteredData?.forEach((x: any) => {
+      const date = dayjs(x?.date);
       const month = date.month() + 1;
       const day = date.date();
       const formattedDay = day.toString();
@@ -69,9 +69,9 @@ const ChartDay = ({ filteredData }: { filteredData: any[] }) => {
           settlementAmount: 0,
         };
 
-        const totalAmount = x.totalAmount;
-        const feeAmount = x.feeAmount;
-        const settlementAmount = x.settlementAmount;
+        const totalAmount = x?.totalAmount;
+        const feeAmount = x?.feeAmount;
+        const settlementAmount = x?.settlementAmount;
 
         dailySales[formattedDay].totalPaymentPrice += totalAmount;
         dailySales[formattedDay].count += 1;
