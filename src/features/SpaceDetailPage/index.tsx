@@ -201,7 +201,7 @@ const SpaceDetailPage = () => {
           </div>
         </div>
       </div>
-      {/* <Descriptions bordered items={items} /> */}
+      <Descriptions bordered items={items} />
     </SpaceDetailStyled>
   );
 };
