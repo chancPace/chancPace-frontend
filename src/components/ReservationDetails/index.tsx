@@ -4,6 +4,7 @@ import { Button, Descriptions, Input, message, Modal, Tag } from 'antd';
 import type { DescriptionsProps, RadioChangeEvent } from 'antd';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import dayjs from 'dayjs';
 interface ReservationDetailsProps {
   spaceName?: string;
   userName?: string;
@@ -42,7 +43,7 @@ const reservationdetails = () => {
             paymentMethod: response.data.paymentMethod,
             cardNumber: response.data.cardNumber,
             price: response.data.paymentPrice,
-            payDate,
+            payDate: dayjs(payDate).tz('Asia/Seoul').format('YYYY-MM-DD'),
             suppliedPrice: response.data.suppliedPrice,
             vat: response.data.vat,
             paymentKey: response.data.paymentKey,
@@ -68,7 +69,6 @@ const reservationdetails = () => {
   const handleConfirmCancel = async () => {
     try {
       const bookingId = id;
-      const cancelReason = '호스트 요청에 따른 취소';
       await Refund(Number(bookingId), cancelReason);
       message.success('예약이 취소되었습니다');
       setIsModalVisible(false);
