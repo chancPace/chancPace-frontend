@@ -38,7 +38,7 @@ const reservationdetails = () => {
       if (id) {
         try {
           const response = await getOnePayment(Number(id));
-          const payDate = response.data.createdAt.split('T')[0];
+          // const payDate = response.data.createdAt.split('T')[0];
           setDetails({
             spaceName: response.data.booking.space.spaceName,
             userName: response.data.user.userName,
@@ -49,7 +49,7 @@ const reservationdetails = () => {
             paymentMethod: response.data.paymentMethod,
             cardNumber: response.data.cardNumber,
             price: response.data.paymentPrice,
-            payDate: dayjs(payDate).tz('Asia/Seoul').format('YYYY-MM-DD'),
+            payDate: dayjs(response.data.createdAt).tz('Asia/Seoul').format('YYYY-MM-DD'),
             suppliedPrice: response.data.suppliedPrice,
             vat: response.data.vat,
             paymentKey: response.data.paymentKey,
