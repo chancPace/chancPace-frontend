@@ -1,5 +1,4 @@
 import { Chart } from 'react-chartjs-2';
-import { DatePicker } from 'antd';
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import {
@@ -17,7 +16,6 @@ import {
   ChartData,
   ChartOptions,
 } from 'chart.js';
-import { useRouter } from 'next/router';
 
 ChartJS.register(
   CategoryScale,
@@ -32,9 +30,12 @@ ChartJS.register(
   Legend
 );
 
-const ChartDay = ({ filteredData }: { filteredData: any[] }) => {
-  const router = useRouter();
-  const page = router.pathname;
+interface ChartMonthProps {
+  filteredData?: { date: string; totalAmount: number; settlementAmount: number }[];
+  selectDate?: string;
+}
+
+const ChartDay = ({ filteredData, selectDate }: ChartMonthProps) => {
   const currentMonth = (dayjs().month() + 1).toString();
   const [sales, setSales] = useState<any[]>([]);
   const [selectedMonth, setSelectedMonth] = useState<string>(currentMonth);
@@ -191,23 +192,7 @@ const ChartDay = ({ filteredData }: { filteredData: any[] }) => {
     }
   };
 
-  return (
-    <>
-      {page !== '/' ? (
-        <div style={{ marginBottom: 20 }}>
-          <DatePicker.MonthPicker
-            value={dayjs(`${dayjs().year()}-${selectedMonth}`)}
-            onChange={handleMonthChange}
-            style={{ width: 200 }}
-            placeholder="월을 선택하세요"
-          />
-        </div>
-      ) : (
-        <></>
-      )}
-      <Chart data={chartData} options={chartOptions} type={'bar'} />
-    </>
-  );
+  return <Chart data={chartData} options={chartOptions} type={'bar'} />;
 };
 
 export default ChartDay;

@@ -1,5 +1,4 @@
 import { Chart } from 'react-chartjs-2';
-import { DatePicker } from 'antd';
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import {
@@ -31,7 +30,12 @@ ChartJS.register(
   Legend
 );
 
-const ChartMonth = ({ filteredData }: { filteredData: any[] }) => {
+interface ChartMonthProps {
+  filteredData: { date: string; totalAmount: number; settlementAmount: number }[];
+  selectDate: string;
+}
+
+const ChartMonth = ({ filteredData, selectDate }: ChartMonthProps) => {
   const currentYear = dayjs().year().toString();
   const [sales, setSales] = useState<any[]>([]);
   const [selectedYear, setSelectedYear] = useState<string>(currentYear);
@@ -167,26 +171,7 @@ const ChartMonth = ({ filteredData }: { filteredData: any[] }) => {
     },
   };
 
-  // 연도 선택을 위한 YearPicker
-  const handleYearChange = (date: any) => {
-    if (date) {
-      setSelectedYear(date.format('YYYY'));
-    }
-  };
-
-  return (
-    <>
-      <div style={{ marginBottom: 20 }}>
-        <DatePicker.YearPicker
-          value={dayjs(`${selectedYear}`)}
-          onChange={handleYearChange}
-          style={{ width: 200 }}
-          placeholder="연도를 선택하세요"
-        />
-      </div>
-      <Chart data={chartData} options={chartOptions} type={'bar'} />
-    </>
-  );
+  return <Chart data={chartData} options={chartOptions} type={'bar'} />;
 };
 
 export default ChartMonth;
