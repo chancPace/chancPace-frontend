@@ -2,17 +2,7 @@ import { RegistrationStyled } from './styled';
 import React, { useEffect, useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import { Category } from '../../types';
-import {
-  Form,
-  Input,
-  Button,
-  Select,
-  InputNumber,
-  Switch,
-  Upload,
-  UploadFile,
-  message,
-} from 'antd';
+import { Form, Input, Button, Select, InputNumber, Switch, Upload, UploadFile, message } from 'antd';
 import { addNewSpace, getOneSpace, updateSpace } from '@/pages/api/spaceApi';
 const { TextArea } = Input;
 import { getCategories } from '@/pages/api/categoryApi';
@@ -98,6 +88,16 @@ const Registration = () => {
     }
   };
 
+  const formatPhoneNumber = (phoneNumber: string) => {
+    const cleaned = phoneNumber.replace(/\D/g, '');
+
+    if (cleaned.length === 11) {
+      return cleaned.replace(/^(\d{3})(\d{4})(\d{4})$/, '$1-$2-$3');
+    }
+
+    return phoneNumber;
+  };
+
   //데이터 전송
   const handleSubmit = async (values: any) => {
     if (fileList.length === 0) {
@@ -163,7 +163,7 @@ const Registration = () => {
         name: fileName,
         status: 'done',
         url: url,
-        originFileObj: file, 
+        originFileObj: file,
       } as UploadFile<any>;
     } catch (error) {
       console.error('Failed to fetch file:', error);
@@ -188,6 +188,7 @@ const Registration = () => {
           form.setFieldsValue({
             ...spaceData,
             spaceLocation: spaceData.spaceLocation,
+            spaceAdminPhoneNumber: formatPhoneNumber(spaceData.spaceAdminPhoneNumber),
           });
 
           setAddValue(spaceData.spaceLocation);
@@ -262,23 +263,14 @@ const Registration = () => {
           <KakaoMapAddress
             addValue={addValue}
             setAddValue={setAddValue}
-            onSelectAddress={(address) =>
-              form.setFieldsValue({ spaceLocation: address })
-            }
+            onSelectAddress={(address) => form.setFieldsValue({ spaceLocation: address })}
           />
         </Form.Item>
         <Form.Item label="상세주소" name="spaceLocationDetail">
           <Input placeholder="상세주소를 입력해 주세요" />
         </Form.Item>
-        <Form.Item
-          label="카테고리"
-          name="categoryId"
-          rules={[{ required: true, message: '카테고리를 선택해주세요' }]}
-        >
-          <Select
-            placeholder="카테고리를 선택해 주세요"
-            options={categoryOptions}
-          />
+        <Form.Item label="카테고리" name="categoryId" rules={[{ required: true, message: '카테고리를 선택해주세요' }]}>
+          <Select placeholder="카테고리를 선택해 주세요" options={categoryOptions} />
         </Form.Item>
         <Form.Item
           label="공간 소개"
@@ -300,6 +292,11 @@ const Registration = () => {
               required: true,
               message: '가격을 입력해 주세요',
             },
+            {
+              type: 'number',
+              min: 1,
+              message: '가격은 1원 이상이여햐 합니다.',
+            },
           ]}
         >
           <InputNumber placeholder="시간당 이용금액을 작성해 주세요" />
@@ -308,10 +305,15 @@ const Registration = () => {
           label="할인금액"
           name="discount"
           rules={[
-            {
-              required: true,
-              message: '가격을 입력해 주세요',
-            },
+            ({ getFieldValue }) => ({
+              validator(_, value) {
+                const price = getFieldValue('spacePrice');
+                if (value !== undefined && value > price) {
+                  return Promise.reject(new Error('할인금액은 가격 이하이어야 합니다.'));
+                }
+                return Promise.resolve();
+              },
+            }),
           ]}
         >
           <InputNumber placeholder="할인금액을 작성해 주세요" />
@@ -329,12 +331,7 @@ const Registration = () => {
             },
           ]}
         >
-          <TextArea
-            rows={2}
-            name="amenities"
-            className="custom-textarea"
-            placeholder="시설 안내를 작성해 주세요"
-          />
+          <TextArea rows={2} name="amenities" className="custom-textarea" placeholder="시설 안내를 작성해 주세요" />
         </Form.Item>
         <Form.Item name="spaceStatus" hidden initialValue="UNAVAILABLE">
           <Input />
@@ -349,12 +346,7 @@ const Registration = () => {
             },
           ]}
         >
-          <TextArea
-            rows={2}
-            name="caution"
-            className="custom-textarea"
-            placeholder="예약시 주의사항을 작성해 주세요"
-          />
+          <TextArea rows={2} name="caution" className="custom-textarea" placeholder="예약시 주의사항을 작성해 주세요" />
         </Form.Item>
         <Form.Item
           label="청소시간"
@@ -404,9 +396,7 @@ const Registration = () => {
                 if (minGuests === undefined || value >= minGuests) {
                   return Promise.resolve();
                 }
-                return Promise.reject(
-                  new Error('최대 인원은 최소 인원보다 크거나 같아야 합니다.')
-                );
+                return Promise.reject(new Error('최대 인원은 최소 인원보다 크거나 같아야 합니다.'));
               },
             }),
           ]}
@@ -416,9 +406,7 @@ const Registration = () => {
         <Form.Item
           label="영업 시작 시간"
           name="businessStartTime"
-          rules={[
-            { required: true, message: '영업 시작 시간을 선택해 주세요' },
-          ]}
+          rules={[{ required: true, message: '영업 시작 시간을 선택해 주세요' }]}
         >
           <Select
             allowClear
@@ -433,9 +421,7 @@ const Registration = () => {
         <Form.Item
           label="영업 종료 시간"
           name="businessEndTime"
-          rules={[
-            { required: true, message: '영업 종료 시간을 선택해 주세요' },
-          ]}
+          rules={[{ required: true, message: '영업 종료 시간을 선택해 주세요' }]}
         >
           <Select
             allowClear
@@ -466,9 +452,7 @@ const Registration = () => {
               showPreviewIcon: false,
               showRemoveIcon: true,
             }}
-            itemRender={(originNode) =>
-              React.cloneElement(originNode, { title: null })
-            }
+            itemRender={(originNode) => React.cloneElement(originNode, { title: null })}
           >
             {fileList.length >= 8 ? null : (
               <div>
@@ -481,7 +465,13 @@ const Registration = () => {
         <Form.Item
           label="관리자 이름"
           name="spaceAdminName"
-          rules={[{ required: true, message: '관리자 이름을 입력해주세요' }]}
+          rules={[
+            { required: true, message: '관리자 이름을 입력해주세요' },
+            {
+              pattern: /^[^0-9]*$/,
+              message: '이름에는 숫자가 포함될 수 없습니다.',
+            },
+          ]}
         >
           <Input placeholder="공간 관리자를 작성해 주세요" />
         </Form.Item>
@@ -489,7 +479,11 @@ const Registration = () => {
           label="관리자 전화번호"
           name="spaceAdminPhoneNumber"
           rules={[
-            { required: true, message: '전화번호를 입력해주세요(-포함)' },
+            { required: true, message: '전화번호를 입력해주세요' },
+            {
+              pattern: /^[0-9]{11}$/,
+              message: '전화번호는 11자리 숫자여야 합니다.',
+            },
           ]}
         >
           <Input placeholder="공간 관리자 연락처를 작성해 주세요" />
