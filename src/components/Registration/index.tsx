@@ -295,7 +295,7 @@ const Registration = () => {
             {
               type: 'number',
               min: 1,
-              message: '가격은 1원 이상이여햐 합니다.',
+              message: '가격은 1원 이상이어야 합니다.',
             },
           ]}
         >
