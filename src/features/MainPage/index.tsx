@@ -59,8 +59,6 @@ const MainPage = () => {
             })
             .flat();
           setFilteredData(transformedData);
-
-          console.log('🚀 ~ fetchData ~ notcancel:', notcancel);
           const todayUse = notcancel.map((x: any) =>
             x.bookings.filter(
               (x: any) =>
@@ -82,15 +80,10 @@ const MainPage = () => {
                 dayjs().tz('Asia/Seoul').format('YYYY-MM-DD')
             )
           );
-          console.log('🚀 ~ fetchData ~ todayUse:', todayUse);
-          console.log('🚀 ~ fetchData ~ todayPay:', todayPay);
-          console.log('🚀 ~ fetchData ~ todayReview:', todayReview);
+
           const todayUseCount = todayUse.filter((x: any) => x.length !== 0);
-          console.log('🚀 ~ fetchData ~ todayUseCount:', todayUseCount);
           const todayPayCount = todayPay.filter((x: any) => x.length !== 0);
-          console.log('🚀 ~ fetchData ~ todayPayCount:', todayPayCount);
           const todayReviewCount = todayReview.filter((x: any) => x.length !== 0);
-          console.log('🚀 ~ fetchData ~ todayReviewCount:', todayReviewCount);
 
           setTodayBooking(todayUseCount.flat().length);
           setTodayPayment(todayPayCount.flat().length);
