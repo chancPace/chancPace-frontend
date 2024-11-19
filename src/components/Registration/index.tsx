@@ -383,12 +383,12 @@ const Registration = () => {
           <InputNumber placeholder="최소인원을 선택해 주세요" />
         </Form.Item>
         <Form.Item
-          label="최대 인원"
+          label="최대 추가 인원"
           name="maxGuests"
           rules={[
             {
               required: true,
-              message: '최대 인원을 입력해 주세요.',
+              message: '최대 추가 인원을 입력해 주세요.',
             },
             ({ getFieldValue }) => ({
               validator(_, value) {
@@ -396,12 +396,12 @@ const Registration = () => {
                 if (minGuests === undefined || value >= minGuests) {
                   return Promise.resolve();
                 }
-                return Promise.reject(new Error('최대 인원은 최소 인원보다 크거나 같아야 합니다.'));
+                return Promise.reject(new Error('최대 추가 인원은 최소 인원보다 크거나 같아야 합니다.'));
               },
             }),
           ]}
         >
-          <InputNumber placeholder="최대 인원을 선택해 주세요" />
+          <InputNumber placeholder="최대 추가 인원을 선택해 주세요" />
         </Form.Item>
         <Form.Item
           label="영업 시작 시간"
