@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { CloseCircleOutlined, SyncOutlined } from '@ant-design/icons';
 import SpaceDetailStyled from './style';
 import { getOneSpace, stopSpace, deleteSpace } from '@/pages/api/spaceApi';
+import { getOneUser } from '@/pages/api/userApi';
 import { Space, User } from '@/types';
 import dayjs from 'dayjs';
 
@@ -12,13 +13,18 @@ const SpaceDetailPage = () => {
   const { id } = router.query;
   const spaceId = String(id);
   const [data, setData] = useState<Space>();
-
+  const [userData, setUserData] = useState<User>();
   const fetchSpaceData = async (spaceId: string) => {
     try {
       const response = await getOneSpace(spaceId);
       const result = response.data;
       if (result) {
         setData(result);
+        const userId = result.userId;
+        if (userId) {
+          const findUser = await getOneUser({ userId });
+          setUserData(findUser?.data?.data);
+        }
       }
     } catch (error) {
       console.log('공간1개', error);
@@ -53,10 +59,15 @@ const SpaceDetailPage = () => {
       label: '계좌 정보',
       children: (
         <>
-          {/* <span style={{ display: 'inline-block', marginRight: 30 }}>{data?.bankAccountName}</span>
-          <span style={{ display: 'inline-block', marginRight: 30 }}> {data?.bankAccountNumber}</span>
-          <span style={{ display: 'inline-block' }}>{data?.bankAccountOwner}</span> */}
-          추후 등록!!!!
+          <span style={{ display: 'inline-block', marginRight: 30 }}>
+            소유주 명 : {userData?.bankAccountOwner ? userData?.bankAccountOwner : '-'}
+          </span>
+          <span style={{ display: 'inline-block', marginRight: 30 }}>
+            은행명 : {userData?.bankAccountName ? userData?.bankAccountName : '-'}
+          </span>
+          <span style={{ display: 'inline-block', marginRight: 30 }}>
+            계좌 번호 : {userData?.bankAccountNumber ? userData?.bankAccountNumber : '-'}
+          </span>
         </>
       ),
       span: 2,

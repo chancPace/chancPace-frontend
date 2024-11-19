@@ -49,6 +49,9 @@ export interface User {
   userName: string;
   email: string;
   accountStatus: string;
+  bankAccountName?: string;
+  bankAccountOwner?: string;
+  bankAccountNumber?: string;
   payment?: Payment[];
 }
 
@@ -136,6 +139,9 @@ export interface Space {
   minGuests?: number;
   maxGuests?: number;
   spaceRating?: number;
+  bankAccountName?: string;
+  bankAccountOwner?: string;
+  bankAccountNumber?: string;
 }
 
 export interface isSpace {
@@ -161,4 +167,8 @@ export interface DataType {
   totalAmount: number;
   feeAmount: number;
   settlementAmount: number;
+}
+
+export interface oneUserData {
+  userId: number;
 }
