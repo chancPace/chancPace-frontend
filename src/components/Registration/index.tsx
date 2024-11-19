@@ -481,8 +481,18 @@ const Registration = () => {
           rules={[
             { required: true, message: '전화번호를 입력해주세요' },
             {
-              pattern: /^[0-9]{11}$/,
-              message: '전화번호는 11자리 숫자여야 합니다.',
+              validator: (_, value) => {
+                const cleanedValue = value.replace(/[^0-9-]/g, ''); // 숫자와 하이픈만 허용
+
+                // 두 가지 형식을 검증하는 정규식
+                const isValidPhone = /^(?:\d{3}-\d{4}-\d{4}|\d{11})$/.test(cleanedValue);
+
+                if (isValidPhone) {
+                  return Promise.resolve();
+                }
+
+                return Promise.reject(new Error('전화번호는 01012345678 또는 010-1234-5678 형식이어야 합니다.'));
+              },
             },
           ]}
         >
