@@ -62,7 +62,7 @@ const LoginPage = () => {
         }}
       >
         <div className="formLogo">
-          <div className="logo">ChancePace</div>
+          <div className="logo">CHAN'SPACE</div>
           <div className="title">호스트</div>
         </div>
         <InputField

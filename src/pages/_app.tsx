@@ -51,7 +51,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>🏠ChancePaceHost</title>
+        <title>CHAN'SPACE HOST</title>
       </Head>
       <ThemeProvider theme={theme}>
         <GlobalStyled />
